@@ -607,11 +607,15 @@ const TUNING_DATA=[
   {name:'Full step ↓', notes:'D G C F A D',  freqs:[73.42,98.00,130.81,174.61,220.00,293.66]},
 ];
 
-let selectedTuning=0;
+let selectedTuning=-1;
 let tunerActive=false,tunerStream=null,tunerAnalyser=null,tunerAudioCtx=null,tunerRAF=null,tunerBuf=null;
 
 function renderTuningList(){
-  document.getElementById('tuning-list').innerHTML=TUNING_DATA.map((t,i)=>
+  const freeRow=`<div class="tuning-row${selectedTuning===-1?' active':''}" onclick="selectTuning(-1)">
+    <div class="tuning-row-name">Frei</div>
+    <div class="tuning-row-notes">Nächster Halbton</div>
+  </div>`;
+  document.getElementById('tuning-list').innerHTML=freeRow+TUNING_DATA.map((t,i)=>
     `<div class="tuning-row${i===selectedTuning?' active':''}" onclick="selectTuning(${i})">
       <div class="tuning-row-name">${t.name}</div>
       <div class="tuning-row-notes">${noteArr(t.notes,tnNotation)}</div>
@@ -700,21 +704,27 @@ function tunerLoop(){
   if(freq>50&&freq<1400){
     const {note,octave,cents}=freqToNote(freq);
 
-    // Find nearest string in selected tuning
-    const tuning=TUNING_DATA[selectedTuning];
-    let nearestIdx=0,minDiff=Infinity;
-    tuning.freqs.forEach((f,i)=>{
-      const diff=Math.abs(1200*Math.log2(freq/f));
-      if(diff<minDiff){minDiff=diff;nearestIdx=i;}
-    });
-    const targetFreq=tuning.freqs[nearestIdx];
-    const diffCents=Math.round(1200*Math.log2(freq/targetFreq));
-    const stringNames=noteArr(tuning.notes,tnNotation).split(' ');
-    const stringName=stringNames[nearestIdx];
-
-    // Display
+    let diffCents, stringLabel;
+    if(selectedTuning===-1){
+      const {cents}=freqToNote(freq);
+      diffCents=cents;
+      stringLabel='';
+    } else {
+      const tuning=TUNING_DATA[selectedTuning];
+      let nearestIdx=0,minDiff=Infinity;
+      tuning.freqs.forEach((f,i)=>{
+        const diff=Math.abs(1200*Math.log2(freq/f));
+        if(diff<minDiff){minDiff=diff;nearestIdx=i;}
+      });
+      const targetFreq=tuning.freqs[nearestIdx];
+      diffCents=Math.round(1200*Math.log2(freq/targetFreq));
+      const stringNames=noteArr(tuning.notes,tnNotation).split(' ');
+      stringLabel=' · Saite: '+stringNames[nearestIdx];
+    }
+    
+    const {note,octave}=freqToNote(freq);
     document.getElementById('tuner-note').textContent=note+octave;
-    document.getElementById('tuner-freq').textContent=freq.toFixed(1)+' Hz · Saite: '+stringName;
+    document.getElementById('tuner-freq').textContent=freq.toFixed(1)+' Hz'+stringLabel;
 
     const centsText=diffCents===0?'♦ gestimmt':diffCents>0?`+${diffCents} Cents (zu hoch)`:`${diffCents} Cents (zu tief)`;
     document.getElementById('tuner-cents').textContent=centsText;
