@@ -18,3 +18,7 @@ Probably just me. The UI is in German, built for a beginner, and tailored to my 
 ## Technical
 
 A single HTML file. No framework, no build system, no dependencies, no server. Just open it in a browser.
+
+## Credits
+
+App icon: <a href="https://www.flaticon.com/free-icons/electric-guitar" title="electric guitar icons">Electric guitar icons created by Freepik - Flaticon</a>
