@@ -25,7 +25,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); }
 .switcher { display: flex; border-bottom: 0.5px solid var(--color-border-tertiary); padding: 0 8px; position: sticky; top: 0; background: var(--color-background-primary); z-index: 10; }
-.sw-btn { flex: 1; padding: 12px 0; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.sw-btn { flex: 1; padding: 12px 0; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .sw-btn.active { color: var(--color-text-primary); border-bottom-color: #E8593C; }
 .sw-btn:hover:not(.active) { color: var(--color-text-primary); }
 .beat-indicator { width: 8px; height: 8px; border-radius: 50%; background: #E8593C; opacity: 0; transition: opacity .1s; }
@@ -78,6 +78,25 @@ svg.fb { display: block; }
 .qz-key { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
 .qz-chords { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.7; }
 .qz-hint { font-size: 11px; color: var(--color-text-secondary); opacity: 0.5; }
+
+/* TUNER */
+.tuner-wrap { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.tuner-note { font-size: 72px; font-weight: 500; color: var(--color-text-primary); line-height: 1; text-align: center; min-height: 80px; }
+.tuner-freq { font-size: 13px; color: var(--color-text-secondary); text-align: center; min-height: 20px; }
+.tuner-cents { font-size: 14px; color: var(--color-text-secondary); text-align: center; min-height: 20px; }
+.tuner-meter { width: 100%; height: 12px; background: var(--color-background-secondary); border-radius: 6px; overflow: hidden; position: relative; }
+.tuner-meter-bar { position: absolute; top: 0; height: 100%; width: 4px; background: #E8593C; border-radius: 2px; transition: left .1s; left: 50%; transform: translateX(-50%); }
+.tuner-meter-center { position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: rgba(255,255,255,0.2); transform: translateX(-50%); }
+.tuner-meter.in-tune .tuner-meter-bar { background: #2eab6e; }
+.tuner-btn { width: 100%; height: 44px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 14px; font-weight: 500; cursor: pointer; transition: background .1s; }
+.tuner-btn.active { background: #2a2a2a; border-color: rgba(255,255,255,0.4); }
+.tuner-strings { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; width: 100%; }
+.tuner-string { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 4px; text-align: center; cursor: pointer; transition: all .15s; }
+.tuner-string:hover { border-color: rgba(255,255,255,0.4); }
+.tuner-string.active { border-color: #E8593C; background: #2a1a1a; }
+.tuner-string-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.tuner-string-freq { font-size: 10px; color: var(--color-text-secondary); margin-top: 2px; }
+.tuner-status { font-size: 12px; color: var(--color-text-secondary); text-align: center; }
 </style>
 </head>
 <body>
@@ -90,6 +109,7 @@ svg.fb { display: block; }
   </button>
   <button class="sw-btn" onclick="showPage('sheet')" id="sw-sheet">CheatSheet</button>
   <button class="sw-btn" onclick="showPage('qz')" id="sw-qz">Quintenzirkel</button>
+  <button class="sw-btn" onclick="showPage('tuner')" id="sw-tuner">Tuner</button>
 </div>
 
 <!-- METRONOME PAGE -->
@@ -156,10 +176,6 @@ svg.fb { display: block; }
   <div id="sec-tunings" class="section" style="display:none">
     <div class="label">Tunings</div>
     <div class="tuning-grid" id="tuning-grid"></div>
-    <div class="scale-info" style="margin-top:12px">
-      <!-- <strong>Knopfler</strong> spielt meist Standard-Tuning, gelegentlich Open-Tunings für Slide.
-      <strong>Hendrix</strong> stimmte oft einen Halbton runter (Eb). <strong>Cobain</strong> nutzte viel Drop D und Standard. -->
-    </div>
   </div>
 </div>
 
@@ -179,63 +195,56 @@ svg.fb { display: block; }
   </div>
 </div>
 
+<!-- TUNER PAGE -->
+<div class="page" id="page-tuner">
+  <div class="tuner-wrap">
+    <div class="tuner-note" id="tuner-note">–</div>
+    <div class="tuner-freq" id="tuner-freq"></div>
+    <div class="tuner-meter" id="tuner-meter">
+      <div class="tuner-meter-center"></div>
+      <div class="tuner-meter-bar" id="tuner-bar"></div>
+    </div>
+    <div class="tuner-cents" id="tuner-cents"></div>
+    <button class="tuner-btn" id="tuner-btn" onclick="toggleTuner()">Mikrofon aktivieren</button>
+    <div class="label" style="align-self:flex-start">Referenzton</div>
+    <div class="tuner-strings" id="tuner-strings"></div>
+    <div class="tuner-status" id="tuner-status"></div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // NOTATION SYSTEM
-// All note names are stored internally in English.
-// Translation happens only at render time via n() and noteArr().
 // ============================================================
-
-// Cheatsheet notation
 let csNotation = 'en';
-// Quintenzirkel notation
 let qzNotation = 'en';
-
-// Translation table: English -> German
-const DE = {
-  'B':'H', 'Bb':'B',
-  'Bm':'Hm', 'Bbm':'Bm',
-  'B7':'H7', 'Bmaj7':'Hmaj7', 'Bm7':'Hm7',
-};
-
-// Translate a single note/chord name
-function n(name, notation) {
-  if(notation === 'de') return DE[name] || name;
-  return name;
-}
-
-// Translate an array of note names separated by spaces (for tuning strings)
-function noteArr(str, notation) {
-  return str.split(' ').map(x => n(x, notation)).join(' ');
-}
+const DE = { 'B':'H','Bb':'B','Bm':'Hm','Bbm':'Bm','B7':'H7','Bmaj7':'Hmaj7','Bm7':'Hm7' };
+function n(name, notation) { return notation==='de' ? (DE[name]||name) : name; }
+function noteArr(str, notation) { return str.split(' ').map(x=>n(x,notation)).join(' '); }
 
 function setCSNotation(val) {
-  csNotation = val;
-  document.getElementById('cs-btn-en').classList.toggle('active', val==='en');
-  document.getElementById('cs-btn-de').classList.toggle('active', val==='de');
-  renderKeyTabs();
-  drawFretboard();
-  renderChords();
-  renderTunings();
+  csNotation=val;
+  document.getElementById('cs-btn-en').classList.toggle('active',val==='en');
+  document.getElementById('cs-btn-de').classList.toggle('active',val==='de');
+  renderKeyTabs(); drawFretboard(); renderChords(); renderTunings();
 }
-
 function setQZNotation(val) {
-  qzNotation = val;
-  document.getElementById('qz-btn-en').classList.toggle('active', val==='en');
-  document.getElementById('qz-btn-de').classList.toggle('active', val==='de');
-  drawQZ(qzSelected);
-  if(qzSelected) qzUpdateInfo(qzSelected);
+  qzNotation=val;
+  document.getElementById('qz-btn-en').classList.toggle('active',val==='en');
+  document.getElementById('qz-btn-de').classList.toggle('active',val==='de');
+  drawQZ(qzSelected); if(qzSelected) qzUpdateInfo(qzSelected);
 }
 
 // ============================================================
 // PAGE SWITCHER
 // ============================================================
 function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sw-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sw-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.getElementById('sw-'+id).classList.add('active');
   if(id==='qz') drawQZ(qzSelected);
+  if(id!=='tuner' && tunerActive) stopTuner();
 }
 
 // ============================================================
@@ -253,12 +262,10 @@ function initAudio() {
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     const buf=audioCtx.createBuffer(1,1,22050);
     const src=audioCtx.createBufferSource();
-    src.buffer=buf;
-    src.connect(audioCtx.destination);
-    src.start(0);
+    src.buffer=buf; src.connect(audioCtx.destination); src.start(0);
   }
 }
-  function scheduleClick(time,isAccent,isSubdiv) {
+function scheduleClick(time,isAccent,isSubdiv) {
   const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
   osc.connect(gain); gain.connect(audioCtx.destination);
   osc.frequency.value=isAccent?1200:isSubdiv?600:900;
@@ -270,12 +277,11 @@ function scheduler() {
   const dur=60/bpm/subdivision;
   while(nextTime<audioCtx.currentTime+scheduleAhead) {
     const beatInBar=Math.floor(currentBeat/subdivision)%beatsPerBar;
-    scheduleClick(nextTime, beatInBar===0, currentBeat%subdivision!==0);
-    scheduledBeats.push({time:nextTime, beat:beatInBar});
+    scheduleClick(nextTime,beatInBar===0,currentBeat%subdivision!==0);
+    scheduledBeats.push({time:nextTime,beat:beatInBar});
     currentBeat++; nextTime+=dur;
   }
-  timerID=setTimeout(scheduler, lookahead);
-  updateDots();
+  timerID=setTimeout(scheduler,lookahead); updateDots();
 }
 function updateDots() {
   if(!audioCtx) return;
@@ -292,7 +298,7 @@ function updateDots() {
 }
 function togglePlay() {
   initAudio();
-  if(audioCtx.state === 'suspended') audioCtx.resume();
+  if(audioCtx.state==='suspended') audioCtx.resume();
   playing=!playing;
   const btn=document.getElementById('play-btn'), dot=document.getElementById('playing-dot');
   if(playing) {
@@ -347,37 +353,24 @@ buildDots();
 
 // ============================================================
 // CHEATSHEET – SCALES
-// Internal note names always in English. Render via n().
 // ============================================================
-const STRINGS_EN = ['e','B','G','D','A','E'];
-const OPEN = [4,11,7,2,9,4];
-// Internal note names (English)
-const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-
-const SCALES = {
-  pentatonic_minor: {intervals:[0,3,5,7,10],  name:'Pentatonik Moll', desc:'Das Fundament von Blues, Rock. 5 Töne, klingt fast immer gut.'},
-  pentatonic_major: {intervals:[0,2,4,7,9],   name:'Pentatonik Dur',  desc:'Heller, country-lastiger Klang. Gleiche Griffmuster wie Penta Moll — nur 3 Bünde versetzt.'},
-  blues:            {intervals:[0,3,5,6,7,10], name:'Blues Scale',     desc:'Pentatonik Moll + Blue Note (b5). Der Seufzer-Ton der jedem Riff Ausdruck gibt.'},
-  natural_minor:    {intervals:[0,2,3,5,7,8,10],name:'Natürliches Moll',desc:'7 Töne, melancholischer Charakter. Basis für klassische Musik & Metal.'},
-  major:            {intervals:[0,2,4,5,7,9,11],name:'Dur',            desc:'Hell, fröhlich.'},
+const STRINGS_EN=['e','B','G','D','A','E'], OPEN=[4,11,7,2,9,4];
+const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const SCALES={
+  pentatonic_minor:{intervals:[0,3,5,7,10],  name:'Pentatonik Moll',desc:'Das Fundament von Blues, Rock. 5 Töne, klingt fast immer gut.'},
+  pentatonic_major:{intervals:[0,2,4,7,9],   name:'Pentatonik Dur', desc:'Heller, country-lastiger Klang. Gleiche Griffmuster wie Penta Moll — nur 3 Bünde versetzt.'},
+  blues:           {intervals:[0,3,5,6,7,10],name:'Blues Scale',    desc:'Pentatonik Moll + Blue Note (b5). Der Seufzer-Ton der jedem Riff Ausdruck gibt.'},
+  natural_minor:   {intervals:[0,2,3,5,7,8,10],name:'Natürliches Moll',desc:'7 Töne, melancholischer Charakter. Basis für klassische Musik & Metal.'},
+  major:           {intervals:[0,2,4,5,7,9,11],name:'Dur',          desc:'Hell, fröhlich.'},
 };
-
-// Keys stored internally in English
-const KEY_NAMES = ['A','E','D','G','C','B'];
-const KEYS = {A:9,E:4,D:2,G:7,C:0,B:11};
+const KEY_NAMES=['A','E','D','G','C','B'], KEYS={A:9,E:4,D:2,G:7,C:0,B:11};
 let currentKey='A', currentScale='pentatonic_minor';
 
 function renderKeyTabs() {
-  const row = document.getElementById('key-tabs');
-  row.innerHTML = KEY_NAMES.map(k =>
-    `<div class="tab${k===currentKey?' active':''}" onclick="setKey('${k}')">${n(k, csNotation)}</div>`
-  ).join('');
+  document.getElementById('key-tabs').innerHTML=KEY_NAMES.map(k=>
+    `<div class="tab${k===currentKey?' active':''}" onclick="setKey('${k}')">${n(k,csNotation)}</div>`).join('');
 }
-
-function getScaleSemitones(k,s) {
-  return SCALES[s].intervals.map(i=>(KEYS[k]+i)%12);
-}
-
+function getScaleSemitones(k,s) { return SCALES[s].intervals.map(i=>(KEYS[k]+i)%12); }
 function drawFretboard() {
   const svg=document.getElementById('fb-svg');
   const scaleTones=getScaleSemitones(currentKey,currentScale), root=KEYS[currentKey];
@@ -395,18 +388,12 @@ function drawFretboard() {
     html+=`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" style="font-size:9px;font-weight:500;fill:#fff">${n(NOTE_NAMES[semi],csNotation)}</text>`;
   }
   svg.innerHTML=html;
-  const sc=SCALES[currentScale];
-  const toneNames=getScaleSemitones(currentKey,currentScale).map(t=>NOTE_NAMES[t]);
+  const sc=SCALES[currentScale], toneNames=getScaleSemitones(currentKey,currentScale).map(t=>NOTE_NAMES[t]);
   document.getElementById('scale-info').innerHTML=
     `<strong>${n(currentKey,csNotation)} ${sc.name}</strong> — ${sc.desc}<br>` +
     `<div style="margin-top:6px">${toneNames.map(t=>`<span class="pill">${n(t,csNotation)}</span>`).join('')}</div>`;
 }
-
-function setKey(k) {
-  currentKey=k;
-  renderKeyTabs();
-  drawFretboard();
-}
+function setKey(k) { currentKey=k; renderKeyTabs(); drawFretboard(); }
 function setScale(s) {
   currentScale=s;
   document.querySelectorAll('#scale-tabs .tab').forEach(t=>t.classList.toggle('active',t.onclick.toString().includes("'"+s+"'")));
@@ -415,110 +402,99 @@ function setScale(s) {
 
 // ============================================================
 // CHEATSHEET – CHORDS
-// Internal names in English. Render via n().
 // ============================================================
 const CHORD_DATA={
   all:[
-    {name:'C',   fingers:[[3,3,5],[2,2,4],[1,1,2]],           mute:[6],   open:[1,3]},
-    {name:'Cm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],  open:[]},
-    {name:'C7',  fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],   mute:[6],   open:[1]},
-    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                  mute:[6],   open:[1,2,3]},
-    {name:'Cm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[]},
-    {name:'D',   fingers:[[2,1,3],[3,3,2],[2,2,1]],            mute:[5,6], open:[4]},
-    {name:'Dm',  fingers:[[2,2,3],[3,3,2],[1,1,1]],            mute:[5,6], open:[4]},
-    {name:'D7',  fingers:[[2,3,3],[1,1,2],[2,2,1]],            mute:[5,6], open:[4]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                       mute:[5,6], open:[4]},
-    {name:'Dm7', fingers:[[1,1,'1-2'],[2,2,3]],                mute:[5,6], open:[4]},
-    {name:'E',   fingers:[[2,2,5],[2,3,4],[1,1,3]],            mute:[],    open:[1,2,6]},
-    {name:'Em',  fingers:[[2,2,5],[2,3,4]],                    mute:[],    open:[1,2,3,6]},
-    {name:'E7',  fingers:[[2,2,5],[1,1,3]],                    mute:[],    open:[1,2,4,6]},
-    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],           mute:[1],   open:[2,6]},
-    {name:'Em7', fingers:[[2,2,5],[2,3,4],[3,4,2]],            mute:[],    open:[1,3,6]},
-    {name:'F',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],   open:[]},
-    {name:'Fm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[]},
-    {name:'F7',  fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],        mute:[],    open:[]},
-    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],           mute:[5,6], open:[1]},
-    {name:'Fm7', fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[]},
-    {name:'G',   fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],    mute:[],    open:[3,4]},
-    {name:'Gm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],  startFret:3},
-    {name:'G7',  fingers:[[3,3,6],[2,2,5],[1,1,1]],            mute:[],    open:[2,3,4]},
-    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],           mute:[],    open:[2,3,4]},
-    {name:'Gm7', fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],  startFret:3},
-    {name:'A',   fingers:[[2,1,4],[2,2,3],[2,3,2]],            mute:[6],   open:[1,5]},
-    {name:'Am',  fingers:[[2,3,4],[2,2,3],[1,1,2]],            mute:[6],   open:[1,5]},
-    {name:'A7',  fingers:[[2,2,4],[2,3,2]],                    mute:[6],   open:[1,3,5]},
-    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],           mute:[6],   open:[1,5]},
-    {name:'Am7', fingers:[[2,2,4],[1,1,2]],                    mute:[6],   open:[1,3,5]},
-    {name:'B',   fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]],mute:[6],  open:[],  startFret:2},
-    {name:'Bm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],  open:[],  startFret:2},
-    {name:'B7',  fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],    mute:[6],   open:[2]},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6], open:[],  startFret:2},
-    {name:'Bm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2},
+    {name:'C',   fingers:[[3,3,5],[2,2,4],[1,1,2]],            mute:[6],   open:[1,3]},
+    {name:'Cm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[]},
+    {name:'C7',  fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],    mute:[6],   open:[1]},
+    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                   mute:[6],   open:[1,2,3]},
+    {name:'Cm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[]},
+    {name:'D',   fingers:[[2,1,3],[3,3,2],[2,2,1]],             mute:[5,6], open:[4]},
+    {name:'Dm',  fingers:[[2,2,3],[3,3,2],[1,1,1]],             mute:[5,6], open:[4]},
+    {name:'D7',  fingers:[[2,3,3],[1,1,2],[2,2,1]],             mute:[5,6], open:[4]},
+    {name:'Dmaj7',fingers:[[2,1,'1-3']],                        mute:[5,6], open:[4]},
+    {name:'Dm7', fingers:[[1,1,'1-2'],[2,2,3]],                 mute:[5,6], open:[4]},
+    {name:'E',   fingers:[[2,2,5],[2,3,4],[1,1,3]],             mute:[],    open:[1,2,6]},
+    {name:'Em',  fingers:[[2,2,5],[2,3,4]],                     mute:[],    open:[1,2,3,6]},
+    {name:'E7',  fingers:[[2,2,5],[1,1,3]],                     mute:[],    open:[1,2,4,6]},
+    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],            mute:[1],   open:[2,6]},
+    {name:'Em7', fingers:[[2,2,5],[2,3,4],[3,4,2]],             mute:[],    open:[1,3,6]},
+    {name:'F',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[]},
+    {name:'Fm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[]},
+    {name:'F7',  fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],         mute:[],    open:[]},
+    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],            mute:[5,6], open:[1]},
+    {name:'Fm7', fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[]},
+    {name:'G',   fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],     mute:[],    open:[3,4]},
+    {name:'Gm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[],  startFret:3},
+    {name:'G7',  fingers:[[3,3,6],[2,2,5],[1,1,1]],             mute:[],    open:[2,3,4]},
+    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],            mute:[],    open:[2,3,4]},
+    {name:'Gm7', fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[],  startFret:3},
+    {name:'A',   fingers:[[2,1,4],[2,2,3],[2,3,2]],             mute:[6],   open:[1,5]},
+    {name:'Am',  fingers:[[2,3,4],[2,2,3],[1,1,2]],             mute:[6],   open:[1,5]},
+    {name:'A7',  fingers:[[2,2,4],[2,3,2]],                     mute:[6],   open:[1,3,5]},
+    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],            mute:[6],   open:[1,5]},
+    {name:'Am7', fingers:[[2,2,4],[1,1,2]],                     mute:[6],   open:[1,3,5]},
+    {name:'B',   fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
+    {name:'Bm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[],  startFret:2},
+    {name:'B7',  fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],     mute:[6],   open:[2]},
+    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],  open:[],  startFret:2},
+    {name:'Bm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[],  startFret:2},
   ],
   basic:[
-    {name:'C',   fingers:[[3,3,5],[2,2,4],[1,1,2]],           mute:[6],   open:[1,3]},
-    {name:'Cm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],  open:[]},
-    {name:'D',   fingers:[[2,1,3],[3,3,2],[2,2,1]],            mute:[5,6], open:[4]},
-    {name:'Dm',  fingers:[[2,2,3],[3,3,2],[1,1,1]],            mute:[5,6], open:[4]},
-    {name:'E',   fingers:[[2,2,5],[2,3,4],[1,1,3]],            mute:[],    open:[1,2,6]},
-    {name:'Em',  fingers:[[2,2,5],[2,3,4]],                    mute:[],    open:[1,2,3,6]},
-    {name:'F',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],   open:[]},
-    {name:'Fm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[]},
-    {name:'G',   fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],    mute:[],    open:[3,4]},
-    {name:'Gm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],  startFret:3},
-    {name:'A',   fingers:[[2,1,4],[2,2,3],[2,3,2]],            mute:[6],   open:[1,5]},
-    {name:'Am',  fingers:[[2,3,4],[2,2,3],[1,1,2]],            mute:[6],   open:[1,5]},
-    {name:'B',   fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]],mute:[6],  open:[],  startFret:2},
-    {name:'Bm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],  open:[],  startFret:2},
-    // {name:'C',   fingers:[[3,3,5],[2,2,4],[1,1,2]],            mute:[6],   open:[1,3]},
-    // {name:'D',   fingers:[[2,1,3],[3,3,2],[2,2,1]],            mute:[5,6], open:[4]},
-    // {name:'Dm',  fingers:[[2,2,3],[3,3,2],[1,1,1]],            mute:[5,6], open:[4]},
-    // {name:'E',   fingers:[[2,2,5],[2,3,4],[1,1,3]],            mute:[],    open:[1,2,6]},
-    // {name:'Em',  fingers:[[2,2,5],[2,3,4]],                    mute:[],    open:[1,2,3,6]},
-    // {name:'G',   fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],    mute:[],    open:[3,4]},
-    // {name:'G alt',fingers:[[3,3,6],[2,2,5],[3,4,1]],           mute:[],    open:[2,3,4]},
-    // {name:'A',   fingers:[[2,1,4],[2,2,3],[2,3,2]],            mute:[6],   open:[1,5]},
-    // {name:'Am',  fingers:[[2,3,4],[2,2,3],[1,1,2]],            mute:[6],   open:[1,5]},
-    // {name:'B7',  fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],    mute:[6],   open:[2]},
+    {name:'C',   fingers:[[3,3,5],[2,2,4],[1,1,2]],            mute:[6],   open:[1,3]},
+    {name:'Cm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[]},
+    {name:'D',   fingers:[[2,1,3],[3,3,2],[2,2,1]],             mute:[5,6], open:[4]},
+    {name:'Dm',  fingers:[[2,2,3],[3,3,2],[1,1,1]],             mute:[5,6], open:[4]},
+    {name:'E',   fingers:[[2,2,5],[2,3,4],[1,1,3]],             mute:[],    open:[1,2,6]},
+    {name:'Em',  fingers:[[2,2,5],[2,3,4]],                     mute:[],    open:[1,2,3,6]},
+    {name:'F',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[]},
+    {name:'Fm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[]},
+    {name:'G',   fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],     mute:[],    open:[3,4]},
+    {name:'Gm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[],  startFret:3},
+    {name:'A',   fingers:[[2,1,4],[2,2,3],[2,3,2]],             mute:[6],   open:[1,5]},
+    {name:'Am',  fingers:[[2,3,4],[2,2,3],[1,1,2]],             mute:[6],   open:[1,5]},
+    {name:'B',   fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
+    {name:'Bm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[],  startFret:2},
   ],
   barre:[
-    {name:'Cm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],  open:[]},
-    {name:'Cm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                       mute:[5,6], open:[4]},
-    {name:'Dm7', fingers:[[1,1,'1-2'],[2,2,3]],                mute:[5,6], open:[4]},
-    {name:'F',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],   open:[]},
-    {name:'Fm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[]},
-    {name:'F7',  fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],        mute:[],    open:[]},
-    {name:'Fm7', fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[]},
-    {name:'Gm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],  startFret:3},
-    {name:'Gm7', fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],  startFret:3},
-    {name:'B',   fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]],mute:[6],  open:[],  startFret:2},
-    {name:'Bm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],  open:[],  startFret:2},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6], open:[],  startFret:2},
-    {name:'Bm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2},
+    {name:'Cm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[]},
+    {name:'Cm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[]},
+    {name:'Dmaj7',fingers:[[2,1,'1-3']],                        mute:[5,6], open:[4]},
+    {name:'Dm7', fingers:[[1,1,'1-2'],[2,2,3]],                 mute:[5,6], open:[4]},
+    {name:'F',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[]},
+    {name:'Fm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[]},
+    {name:'F7',  fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],         mute:[],    open:[]},
+    {name:'Fm7', fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[]},
+    {name:'Gm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[],  startFret:3},
+    {name:'Gm7', fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[],  startFret:3},
+    {name:'B',   fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
+    {name:'Bm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[],  startFret:2},
+    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],  open:[],  startFret:2},
+    {name:'Bm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[],  startFret:2},
   ],
   '7th':[
-    {name:'C7',  fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],   mute:[6],   open:[1]},
-    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                  mute:[6],   open:[1,2,3]},
-    {name:'Cm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[]},
-    {name:'D7',  fingers:[[2,3,3],[1,1,2],[2,2,1]],            mute:[5,6], open:[4]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                       mute:[5,6], open:[4]},
-    {name:'Dm7', fingers:[[1,1,'1-2'],[2,2,3]],                mute:[5,6], open:[4]},
-    {name:'E7',  fingers:[[2,2,5],[1,1,3]],                    mute:[],    open:[1,2,4,6]},
-    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],           mute:[1],   open:[2,6]},
-    {name:'Em7', fingers:[[2,2,5],[2,3,4],[3,4,2]],            mute:[],    open:[1,3,6]},
-    {name:'F7',  fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],        mute:[],    open:[]},
-    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],           mute:[5,6], open:[1]},
-    {name:'Fm7', fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[]},
-    {name:'G7',  fingers:[[3,3,6],[2,2,5],[1,1,1]],            mute:[],    open:[2,3,4]},
-    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],           mute:[],    open:[2,3,4]},
-    {name:'Gm7', fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],  startFret:3},
-    {name:'A7',  fingers:[[2,2,4],[2,3,2]],                    mute:[6],   open:[1,3,5]},
-    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],           mute:[6],   open:[1,5]},
-    {name:'Am7', fingers:[[2,2,4],[1,1,2]],                    mute:[6],   open:[1,3,5]},
-    {name:'B7',  fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],    mute:[6],   open:[2]},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6], open:[],  startFret:2},
-    {name:'Bm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2},
+    {name:'C7',  fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],    mute:[6],   open:[1]},
+    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                   mute:[6],   open:[1,2,3]},
+    {name:'Cm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[]},
+    {name:'D7',  fingers:[[2,3,3],[1,1,2],[2,2,1]],             mute:[5,6], open:[4]},
+    {name:'Dmaj7',fingers:[[2,1,'1-3']],                        mute:[5,6], open:[4]},
+    {name:'Dm7', fingers:[[1,1,'1-2'],[2,2,3]],                 mute:[5,6], open:[4]},
+    {name:'E7',  fingers:[[2,2,5],[1,1,3]],                     mute:[],    open:[1,2,4,6]},
+    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],            mute:[1],   open:[2,6]},
+    {name:'Em7', fingers:[[2,2,5],[2,3,4],[3,4,2]],             mute:[],    open:[1,3,6]},
+    {name:'F7',  fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],         mute:[],    open:[]},
+    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],            mute:[5,6], open:[1]},
+    {name:'Fm7', fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[]},
+    {name:'G7',  fingers:[[3,3,6],[2,2,5],[1,1,1]],             mute:[],    open:[2,3,4]},
+    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],            mute:[],    open:[2,3,4]},
+    {name:'Gm7', fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[],  startFret:3},
+    {name:'A7',  fingers:[[2,2,4],[2,3,2]],                     mute:[6],   open:[1,3,5]},
+    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],            mute:[6],   open:[1,5]},
+    {name:'Am7', fingers:[[2,2,4],[1,1,2]],                     mute:[6],   open:[1,3,5]},
+    {name:'B7',  fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],     mute:[6],   open:[2]},
+    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],  open:[],  startFret:2},
+    {name:'Bm7', fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[],  startFret:2},
   ],
 };
 let currentChordCat='all';
@@ -549,7 +525,6 @@ function drawChord(chord) {
   });
   h+='</svg>'; return h;
 }
-
 function setChordCat(cat){
   currentChordCat=cat;
   document.querySelectorAll('#chord-cat-tabs .tab').forEach(t=>t.classList.toggle('active',t.onclick.toString().includes(cat)));
@@ -560,31 +535,21 @@ function renderChords(){
     `<div class="chord-card"><div class="chord-name">${n(c.name,csNotation)}</div>${drawChord(c)}</div>`).join('');
 }
 
-// ============================================================
-// CHEATSHEET – TUNINGS
-// Stored in English, rendered via noteArr()
-// ============================================================
-const TUNING_DATA = [
-  {name:'Standard',    notes:'E A D G B e'},
-  {name:'Drop D',      notes:'D A D G B e'},
-  {name:'Open E',      notes:'E B E G# B e'},
-  {name:'Open G',      notes:'D G D G B D'},
-  {name:'Open D',      notes:'D A D F# A D'},
-  {name:'DADGAD',      notes:'D A D G A D'},
-  {name:'Drop C',      notes:'C G C F A D'},
-  {name:'Half step ↓', notes:'Eb Ab Db Gb Bb eb'},
-  {name:'Full step ↓', notes:'D G C F A D'},
+const TUNING_DATA=[
+  {name:'Standard',   notes:'E A D G B e'},
+  {name:'Drop D',     notes:'D A D G B e'},
+  {name:'Open E',     notes:'E B E G# B e'},
+  {name:'Open G',     notes:'D G D G B D'},
+  {name:'Open D',     notes:'D A D F# A D'},
+  {name:'DADGAD',     notes:'D A D G A D'},
+  {name:'Drop C',     notes:'C G C F A D'},
+  {name:'Half step ↓',notes:'Eb Ab Db Gb Bb eb'},
+  {name:'Full step ↓',notes:'D G C F A D'},
 ];
-
-function renderTunings() {
-  document.getElementById('tuning-grid').innerHTML = TUNING_DATA.map(t =>
-    `<div class="tuning-card">
-      <div class="tuning-name">${t.name}</div>
-      <div class="tuning-notes">${noteArr(t.notes, csNotation)}</div>
-    </div>`
-  ).join('');
+function renderTunings(){
+  document.getElementById('tuning-grid').innerHTML=TUNING_DATA.map(t=>
+    `<div class="tuning-card"><div class="tuning-name">${t.name}</div><div class="tuning-notes">${noteArr(t.notes,csNotation)}</div></div>`).join('');
 }
-
 function showSection(id){
   ['scales','chords','tunings'].forEach(s=>{document.getElementById('sec-'+s).style.display=s===id?'':'none';});
   document.querySelectorAll('#main-tabs .tab').forEach(t=>{
@@ -593,34 +558,18 @@ function showSection(id){
   if(id==='chords') renderChords();
   if(id==='tunings') renderTunings();
 }
-
-// Initial render
-renderKeyTabs();
-drawFretboard();
-renderTunings();
+renderKeyTabs(); drawFretboard(); renderTunings();
 
 // ============================================================
 // QUINTENZIRKEL
-// Internal keys always in English. Render via n().
 // ============================================================
-const QZ_KEYS_MAJ = ['C','G','D','A','E','B','F#/Gb','Db','Ab','Eb','Bb','F'];
-const QZ_KEYS_MIN = ['Am','Em','Bm','F#m','C#m','G#m','D#m/Ebm','Bbm','Fm','Cm','Gm','Dm'];
-
-// QZ display: translate B→H, Bb→B etc.
-const QZ_DE = {
-  'B':'H','Bb':'B','Bm':'Hm','Bbm':'Bm',
-  'B7':'H7','Bmaj7':'Hmaj7','Bm7':'Hm7',
-  'F#/Gb':'F#/Gb', // unchanged
-  'D#m/Ebm':'D#m/Ebm', // unchanged
-};
-function qn(name) {
-  if(qzNotation==='de') return QZ_DE[name] || name;
-  return name;
-}
-
+const QZ_KEYS_MAJ=['C','G','D','A','E','B','F#/Gb','Db','Ab','Eb','Bb','F'];
+const QZ_KEYS_MIN=['Am','Em','Bm','F#m','C#m','G#m','D#m/Ebm','Bbm','Fm','Cm','Gm','Dm'];
+const QZ_DE={'B':'H','Bb':'B','Bm':'Hm','Bbm':'Bm','B7':'H7','Bmaj7':'Hmaj7','Bm7':'Hm7'};
+function qn(name){ return qzNotation==='de'?(QZ_DE[name]||name):name; }
 const QZ_DATA={
-  'C':{chords:['C','Dm','Em','F','G','Am','Bdim'],  rel:'Am'},
-  'G':{chords:['G','Am','Bm','C','D','Em','F#dim'], rel:'Em'},
+  'C':{chords:['C','Dm','Em','F','G','Am','Bdim'],rel:'Am'},
+  'G':{chords:['G','Am','Bm','C','D','Em','F#dim'],rel:'Em'},
   'D':{chords:['D','Em','F#m','G','A','Bm','C#dim'],rel:'Bm'},
   'A':{chords:['A','Bm','C#m','D','E','F#m','G#dim'],rel:'F#m'},
   'E':{chords:['E','F#m','G#m','A','B','C#m','D#dim'],rel:'C#m'},
@@ -632,31 +581,26 @@ const QZ_DATA={
   'Bb':{chords:['Bb','Cm','Dm','Eb','F','Gm','Adim'],rel:'Gm'},
   'F':{chords:['F','Gm','Am','Bb','C','Dm','Edim'],rel:'Dm'},
 };
-
 const QZ_CX=250,QZ_CY=250,R_OUT=200,R_MID=148,R_IN=96,R_CENTER=44,TEXT_OUT=175,TEXT_IN=122;
 let qzSelected=null;
-
 function qzSlicePath(r1,r2,startA,endA){
   const x1=QZ_CX+r1*Math.cos(startA),y1=QZ_CY+r1*Math.sin(startA);
   const x2=QZ_CX+r2*Math.cos(startA),y2=QZ_CY+r2*Math.sin(startA);
-  const x3=QZ_CX+r2*Math.cos(endA),  y3=QZ_CY+r2*Math.sin(endA);
-  const x4=QZ_CX+r1*Math.cos(endA),  y4=QZ_CY+r1*Math.sin(endA);
+  const x3=QZ_CX+r2*Math.cos(endA),y3=QZ_CY+r2*Math.sin(endA);
+  const x4=QZ_CX+r1*Math.cos(endA),y4=QZ_CY+r1*Math.sin(endA);
   return `M${x1},${y1} A${r1},${r1},0,${endA-startA>Math.PI?1:0},1,${x4},${y4} L${x3},${y3} A${r2},${r2},0,${endA-startA>Math.PI?1:0},0,${x2},${y2} Z`;
 }
-
 function drawQZ(sel){
-  const svg=document.getElementById('qz-svg');
-  if(!svg) return;
+  const svg=document.getElementById('qz-svg'); if(!svg) return;
   const sliceAngle=(2*Math.PI)/12, offset=-Math.PI/2;
   let html='';
   for(let i=0;i<12;i++){
-    const a1=offset+i*sliceAngle-sliceAngle/2, a2=a1+sliceAngle, aMid=(a1+a2)/2;
-    const majEN=QZ_KEYS_MAJ[i], minEN=QZ_KEYS_MIN[i];
-    const isSel=sel===majEN;
+    const a1=offset+i*sliceAngle-sliceAngle/2,a2=a1+sliceAngle,aMid=(a1+a2)/2;
+    const majEN=QZ_KEYS_MAJ[i],minEN=QZ_KEYS_MIN[i],isSel=sel===majEN;
     const isAdj=sel&&!isSel&&(QZ_KEYS_MAJ[(i+1)%12]===sel||QZ_KEYS_MAJ[(i+11)%12]===sel||(QZ_DATA[sel]&&QZ_DATA[sel].rel===minEN));
     const outerFill=isSel?'#E8593C':isAdj?'#2a3a4a':'#1e2a35';
     const innerFill=isSel?'#c44a2e':isAdj?'#1e2e3a':'#172028';
-    const outerText=isSel?'#fff':'#c8d8e8', innerText=isSel?'#ffe0d8':'#7a9ab0';
+    const outerText=isSel?'#fff':'#c8d8e8',innerText=isSel?'#ffe0d8':'#7a9ab0';
     html+=`<path d="${qzSlicePath(R_OUT,R_MID,a1,a2)}" fill="${outerFill}" stroke="#0d1820" stroke-width="1.5" style="cursor:pointer" onclick="qzSelect('${majEN}')"/>`;
     html+=`<path d="${qzSlicePath(R_MID,R_IN,a1,a2)}" fill="${innerFill}" stroke="#0d1820" stroke-width="1.5" style="cursor:pointer" onclick="qzSelect('${majEN}')"/>`;
     html+=`<text x="${QZ_CX+TEXT_OUT*Math.cos(aMid)}" y="${QZ_CY+TEXT_OUT*Math.sin(aMid)}" text-anchor="middle" dominant-baseline="central" style="font-size:14px;font-weight:500;fill:${outerText};pointer-events:none">${qn(majEN)}</text>`;
@@ -672,28 +616,172 @@ function drawQZ(sel){
   }
   svg.innerHTML=html;
 }
-
 function qzUpdateInfo(key){
-  const info=document.getElementById('qz-key'), chords=document.getElementById('qz-chords');
-  info.textContent=qn(key)+' Dur';
-  info.style.color='#E8593C';
+  const info=document.getElementById('qz-key'),chords=document.getElementById('qz-chords');
+  info.textContent=qn(key)+' Dur'; info.style.color='#E8593C';
   chords.innerHTML='I–VII: '+QZ_DATA[key].chords.join('  ·  ')+'<br>Mollparallele: '+qn(QZ_DATA[key].rel);
 }
-
 function qzSelect(key){
-  qzSelected=qzSelected===key?null:key;
-  drawQZ(qzSelected);
-  const info=document.getElementById('qz-key'), chords=document.getElementById('qz-chords');
-  if(qzSelected&&QZ_DATA[qzSelected]){
-    qzUpdateInfo(qzSelected);
-  } else {
-    info.textContent='Klick auf eine Tonart';
-    info.style.color='var(--color-text-primary)';
-    chords.textContent='';
+  qzSelected=qzSelected===key?null:key; drawQZ(qzSelected);
+  const info=document.getElementById('qz-key'),chords=document.getElementById('qz-chords');
+  if(qzSelected&&QZ_DATA[qzSelected]) qzUpdateInfo(qzSelected);
+  else { info.textContent='Klick auf eine Tonart'; info.style.color='var(--color-text-primary)'; chords.textContent=''; }
+}
+drawQZ(null);
+
+// ============================================================
+// TUNER
+// Pitch detection via autocorrelation (McLeod Pitch Method lite)
+// ============================================================
+
+// Standard guitar string frequencies (E2, A2, D3, G3, B3, E4)
+const GUITAR_STRINGS = [
+  {name:'E2', freq:82.41},
+  {name:'A2', freq:110.00},
+  {name:'D3', freq:146.83},
+  {name:'G3', freq:196.00},
+  {name:'B3', freq:246.94},
+  {name:'E4', freq:329.63},
+];
+
+// All note names for pitch detection
+const ALL_NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+let tunerActive = false;
+let tunerStream = null;
+let tunerAnalyser = null;
+let tunerAudioCtx = null;
+let tunerRAF = null;
+let tunerBuf = null;
+let selectedString = null;
+
+function buildTunerStrings() {
+  document.getElementById('tuner-strings').innerHTML = GUITAR_STRINGS.map((s,i) =>
+    `<div class="tuner-string${selectedString===i?' active':''}" onclick="selectString(${i})">
+      <div class="tuner-string-name">${s.name}</div>
+      <div class="tuner-string-freq">${s.freq.toFixed(1)} Hz</div>
+    </div>`
+  ).join('');
+}
+buildTunerStrings();
+
+function selectString(i) {
+  selectedString = selectedString===i ? null : i;
+  buildTunerStrings();
+}
+
+function freqToNote(freq) {
+  const semitones = Math.round(12 * Math.log2(freq / 440));
+  const noteIdx = ((semitones % 12) + 12 + 9) % 12;
+  const octave = Math.floor((semitones + 57) / 12);
+  const cents = Math.round(1200 * Math.log2(freq / (440 * Math.pow(2, Math.round(12 * Math.log2(freq/440)) / 12))));
+  return { note: ALL_NOTES[noteIdx], octave, cents };
+}
+
+function autoCorrelate(buf, sampleRate) {
+  const SIZE = buf.length;
+  let rms = 0;
+  for(let i=0;i<SIZE;i++) rms += buf[i]*buf[i];
+  rms = Math.sqrt(rms/SIZE);
+  if(rms < 0.01) return -1;
+
+  let r1=0, r2=SIZE-1;
+  for(let i=0;i<SIZE/2;i++) if(Math.abs(buf[i])<0.2){r1=i;break;}
+  for(let i=1;i<SIZE/2;i++) if(Math.abs(buf[SIZE-i])<0.2){r2=SIZE-i;break;}
+  buf = buf.slice(r1,r2);
+  const newSize = buf.length;
+
+  const c = new Float32Array(newSize).fill(0);
+  for(let i=0;i<newSize;i++)
+    for(let j=0;j<newSize-i;j++)
+      c[i] += buf[j]*buf[j+i];
+
+  let d=0;
+  while(c[d]>c[d+1]) d++;
+  let maxVal=-1, maxPos=-1;
+  for(let i=d;i<newSize;i++) if(c[i]>maxVal){maxVal=c[i];maxPos=i;}
+  if(maxPos<0) return -1;
+
+  let T0=maxPos;
+  const x1=c[T0-1],x2=c[T0],x3=c[T0+1];
+  T0 = T0 + (x3-x1)/(2*(2*x2-x1-x3));
+  return sampleRate/T0;
+}
+
+async function toggleTuner() {
+  if(tunerActive) { stopTuner(); return; }
+  try {
+    tunerStream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
+    tunerAudioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const source = tunerAudioCtx.createMediaStreamSource(tunerStream);
+    tunerAnalyser = tunerAudioCtx.createAnalyser();
+    tunerAnalyser.fftSize = 2048;
+    source.connect(tunerAnalyser);
+    tunerBuf = new Float32Array(tunerAnalyser.fftSize);
+    tunerActive = true;
+    document.getElementById('tuner-btn').textContent = '■ Stopp';
+    document.getElementById('tuner-btn').classList.add('active');
+    document.getElementById('tuner-status').textContent = '';
+    tunerLoop();
+  } catch(e) {
+    document.getElementById('tuner-status').textContent = 'Mikrofonzugriff verweigert oder nicht verfügbar.';
   }
 }
 
-drawQZ(null);
+function stopTuner() {
+  tunerActive = false;
+  if(tunerRAF) cancelAnimationFrame(tunerRAF);
+  if(tunerStream) tunerStream.getTracks().forEach(t=>t.stop());
+  if(tunerAudioCtx) tunerAudioCtx.close();
+  tunerStream = tunerAudioCtx = tunerAnalyser = null;
+  document.getElementById('tuner-btn').textContent = 'Mikrofon aktivieren';
+  document.getElementById('tuner-btn').classList.remove('active');
+  document.getElementById('tuner-note').textContent = '–';
+  document.getElementById('tuner-freq').textContent = '';
+  document.getElementById('tuner-cents').textContent = '';
+  document.getElementById('tuner-bar').style.left = '50%';
+  document.getElementById('tuner-meter').classList.remove('in-tune');
+}
+
+function tunerLoop() {
+  if(!tunerActive) return;
+  tunerAnalyser.getFloatTimeDomainData(tunerBuf);
+  const freq = autoCorrelate(tunerBuf, tunerAudioCtx.sampleRate);
+
+  if(freq > 60 && freq < 1400) {
+    const {note, octave, cents} = freqToNote(freq);
+    document.getElementById('tuner-note').textContent = note + octave;
+    document.getElementById('tuner-freq').textContent = freq.toFixed(1) + ' Hz';
+
+    const centsText = cents === 0 ? '♦ gestimmt' : cents > 0 ? `+${cents} Cents (zu hoch)` : `${cents} Cents (zu tief)`;
+    document.getElementById('tuner-cents').textContent = centsText;
+
+    const pct = 50 + (cents / 50) * 45;
+    const clamped = Math.max(5, Math.min(95, pct));
+    document.getElementById('tuner-bar').style.left = clamped + '%';
+
+    const inTune = Math.abs(cents) < 5;
+    document.getElementById('tuner-meter').classList.toggle('in-tune', inTune);
+
+    if(selectedString !== null) {
+      const target = GUITAR_STRINGS[selectedString].freq;
+      const diffCents = Math.round(1200 * Math.log2(freq / target));
+      const diffText = diffCents === 0 ? '♦ gestimmt' : diffCents > 0 ? `+${diffCents} Cents (zu hoch)` : `${diffCents} Cents (zu tief)`;
+      document.getElementById('tuner-cents').textContent = diffText;
+      const pct2 = 50 + (diffCents / 50) * 45;
+      document.getElementById('tuner-bar').style.left = Math.max(5,Math.min(95,pct2)) + '%';
+      document.getElementById('tuner-meter').classList.toggle('in-tune', Math.abs(diffCents) < 5);
+    }
+  } else {
+    document.getElementById('tuner-note').textContent = '–';
+    document.getElementById('tuner-freq').textContent = '';
+    document.getElementById('tuner-cents').textContent = '';
+    document.getElementById('tuner-bar').style.left = '50%';
+    document.getElementById('tuner-meter').classList.remove('in-tune');
+  }
+
+  tunerRAF = requestAnimationFrame(tunerLoop);
+}
 </script>
 </body>
 </html>
