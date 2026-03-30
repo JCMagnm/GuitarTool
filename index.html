@@ -246,8 +246,17 @@ let timerID=null, tapTimes=[];
 const SIGS=[2,3,4,5,6,7];
 const SUBS=[{v:1,l:'♩'},{v:2,l:'♪♪'},{v:3,l:'♪♪♪'},{v:4,l:'♬'}];
 
-function initAudio() { if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
-function scheduleClick(time,isAccent,isSubdiv) {
+function initAudio() {
+  if(!audioCtx) {
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const buf=audioCtx.createBuffer(1,1,22050);
+    const src=audioCtx.createBufferSource();
+    src.buffer=buf;
+    src.connect(audioCtx.destination);
+    src.start(0);
+  }
+}
+  function scheduleClick(time,isAccent,isSubdiv) {
   const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
   osc.connect(gain); gain.connect(audioCtx.destination);
   osc.frequency.value=isAccent?1200:isSubdiv?600:900;
