@@ -280,7 +280,9 @@ function updateDots() {
   if(playing) requestAnimationFrame(updateDots);
 }
 function togglePlay() {
-  initAudio(); playing=!playing;
+  initAudio();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  playing=!playing;
   const btn=document.getElementById('play-btn'), dot=document.getElementById('playing-dot');
   if(playing) {
     currentBeat=0; nextTime=audioCtx.currentTime+0.05; scheduledBeats=[];
