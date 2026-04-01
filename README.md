@@ -17,7 +17,11 @@ Probably just me. The UI is in German, built for a beginner, and tailored to my 
 
 ## Technical
 
-A single HTML file. No framework, no build system, no dependencies, no server. Just open it in a browser.
+A single HTML file plus a service worker (`sw.js`).
+No framework, no build system, no dependencies, no server.
+Just open it in a browser – or add it to your home screen on iOS/Android for a full offline-capable PWA experience. After the first load, the app works without an internet connection.
+Microphone access (for the tuner) is remembered by the browser after the first permission prompt. On iOS, this may reset after long periods of inactivity.
+
 
 ## Credits
 
