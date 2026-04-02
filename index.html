@@ -103,8 +103,9 @@ svg.fb { display: block; }
     Metronom
     <div class="beat-indicator" id="beat-indicator"></div>
   </button>
-  <button class="sw-btn" onclick="showPage('sheet')" id="sw-sheet">CheatSheet</button>
   <button class="sw-btn" onclick="showPage('tuner')" id="sw-tuner">Tuner</button>
+  <button class="sw-btn" onclick="showPage('scales')" id="sw-scales">Scales</button>
+  <button class="sw-btn" onclick="showPage('chords')" id="sw-chords">Akkorde</button>
   <button class="sw-btn" onclick="showPage('qz')" id="sw-qz">Quintenzirkel</button>
 </div>
 
@@ -132,15 +133,11 @@ svg.fb { display: block; }
   </div>
 </div>
 
-<!-- CHEATSHEET PAGE -->
-<div class="page" id="page-sheet">
+<!-- SCALES PAGE -->
+<div class="page" id="page-scales">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en" onclick="setCSNotation('en')">English (B/Bb)</button>
     <button class="tab" id="cs-btn-de" onclick="setCSNotation('de')">Deutsch (H/B)</button>
-  </div>
-  <div class="tabs" id="main-tabs">
-    <div class="tab active" onclick="showSection('scales')">Scales</div>
-    <div class="tab" onclick="showSection('chords')">Akkorde</div>
   </div>
   <div id="sec-scales" class="section">
     <div class="label">Tonart wählen</div>
@@ -158,7 +155,15 @@ svg.fb { display: block; }
     </div>
     <div class="scale-info" id="scale-info"></div>
   </div>
-  <div id="sec-chords" class="section" style="display:none">
+</div>
+
+<!-- CHORDS PAGE -->
+<div class="page" id="page-chords">
+  <div class="notation-bar">
+    <button class="tab active" id="cs-btn-en-chords" onclick="setCSNotation('en')">English (B/Bb)</button>
+    <button class="tab" id="cs-btn-de-chords" onclick="setCSNotation('de')">Deutsch (H/B)</button>
+  </div>
+  <div id="sec-chords" class="section">
     <div class="label">Kategorie</div>
     <div class="tabs" id="chord-cat-tabs">
       <div class="tab active" onclick="setChordCat('all')">Alle</div>
@@ -219,9 +224,15 @@ function n(name, notation) { return notation==='de' ? (DE[name]||name) : name; }
 function noteArr(str, notation) { return str.split(' ').map(x=>n(x,notation)).join(' '); }
 
 function setCSNotation(val) {
-  csNotation=val;
-  document.getElementById('cs-btn-en').classList.toggle('active',val==='en');
-  document.getElementById('cs-btn-de').classList.toggle('active',val==='de');
+  csNotation = val;
+  ['cs-btn-en','cs-btn-en-chords'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('active', val === 'en');
+  });
+  ['cs-btn-de','cs-btn-de-chords'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('active', val === 'de');
+  });
   renderKeyTabs(); drawFretboard(); renderChords();
 }
 function setQZNotation(val) {
