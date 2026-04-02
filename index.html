@@ -257,6 +257,7 @@ function showPage(id) {
   document.getElementById('page-'+id).classList.add('active');
   document.getElementById('sw-'+id).classList.add('active');
   if(id==='qz') drawQZ(qzSelected);
+  if(id === 'chords') renderChords();
   if(id!=='tuner' && tunerActive) stopTuner();
 }
 
