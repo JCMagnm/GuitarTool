@@ -48,7 +48,7 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .controls { display: flex; gap: 10px; margin-bottom: 16px; }
 .play-btn { flex: 1; height: 44px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 14px; font-weight: 500; cursor: pointer; transition: background .1s; }
 .play-btn.playing { background: #2a2a2a; border-color: rgba(255,255,255,0.4); }
-.tap-btn { flex: 1; height: 44px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; transition: all .1s; }
+.tap-btn { flex: 1; height: 44px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; transition: all .1s; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 .tap-btn:active { background: #333; color: var(--color-text-primary); transform: scale(0.97); }
 .sig-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
 .sig-btn { font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all .1s; }
