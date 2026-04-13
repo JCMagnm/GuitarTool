@@ -275,6 +275,19 @@ svg.fb { display: block; }
     <button class="tab active" id="cs-btn-en-chords" onclick="setCSNotation('en')">English (B/Bb)</button>
     <button class="tab" id="cs-btn-de-chords" onclick="setCSNotation('de')">German (H/B)</button>
   </div>
+  <div class="label">Tuning</div>
+  <div class="tabs" id="chord-tuning-tabs">
+    <div class="tab active" onclick="setChordTuning('standard')">Standard</div>
+    <div class="tab" onclick="setChordTuning('dropd')">Drop D</div>
+    <div class="tab" onclick="setChordTuning('opene')">Open E</div>
+    <div class="tab" onclick="setChordTuning('openg')">Open G</div>
+    <div class="tab" onclick="setChordTuning('opend')">Open D</div>
+    <div class="tab" onclick="setChordTuning('dadgad')">DADGAD</div>
+    <div class="tab" onclick="setChordTuning('dropc')">Drop C</div>
+    <div class="tab" onclick="setChordTuning('dropb')">Drop B</div>
+    <div class="tab" onclick="setChordTuning('halfstep')">Half step ↓</div>
+    <div class="tab" onclick="setChordTuning('fullstep')">Full step ↓</div>
+  </div>
   <div id="sec-chords" class="section">
     <div class="label">Category</div>
     <div class="tabs" id="chord-cat-tabs">
@@ -284,7 +297,7 @@ svg.fb { display: block; }
       <div class="tab" onclick="setChordCat('barre')">Barre</div>
     </div>
     <div style="font-size:11px;color:var(--color-text-secondary);opacity:0.6;margin-bottom:12px">
-      Standard tuning only
+      At the moment standard tuning only
     </div>
     <div class="chord-grid" id="chord-grid"></div>
     <div style="margin-top:24px;padding-top:16px;border-top:0.5px solid var(--color-border-tertiary)">
@@ -662,10 +675,15 @@ const CHORD_DATA={
     {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],   open:[],  startFret:2, tags:['barre','7th']},
     {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2, tags:['barre','7th']},
   ],
-  dropd:[
-    {name:'C',    fingers:[[3,3,5],[2,2,4],[1,1,2]],            mute:[6],   open:[1,3],  tags:['basic']},
-    {name:'Cm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[],     tags:['basic','barre']},
-  ],
+  dropd:    [],
+  opene:    [],
+  openg:    [],
+  opend:    [],
+  dadgad:   [],
+  dropc:    [],
+  dropb:    [],
+  halfstep: [],
+  fullstep: [],
 };
 
 let currentChordTuning='standard'
@@ -697,7 +715,12 @@ function drawChord(chord) {
   });
   h+='</svg>'; return h;
 }
-
+function setChordTuning(tuning) {
+  currentChordTuning = tuning;
+  document.querySelectorAll('#chord-tuning-tabs .tab').forEach(t =>
+    t.classList.toggle('active', t.onclick.toString().includes("'"+tuning+"'")));
+  renderChords();
+}
 function setChordCat(cat) {
   currentChordCat = cat;
   document.querySelectorAll('#chord-cat-tabs .tab').forEach(t=>t.classList.toggle('active', t.onclick.toString().includes("'"+cat+"'")));
