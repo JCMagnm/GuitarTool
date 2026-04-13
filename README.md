@@ -1,6 +1,6 @@
 # GuitarTool
 
-A personal guitar learning tool I built for myself – because I needed exactly this and couldn't find anything that had it all in one place without ads, costs, or data tracking.
+A free, offline-capable guitar tool for the browser – metronome, chromatic tuner, chord diagrams, scale visualizer and circle of fifths in a single HTML file. All in one place without ads, costs, or data tracking.
 
 ## Features
 
