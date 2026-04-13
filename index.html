@@ -527,13 +527,6 @@ function renderChords() {
   document.getElementById('chord-grid').innerHTML=CHORD_DATA[currentChordCat].map(c=>
     `<div class="chord-card"><div class="chord-name">${n(c.name,csNotation)}</div>${drawChord(c)}</div>`).join('');
 }
-function showSection(id) {
-  ['scales','chords'].forEach(s=>{document.getElementById('sec-'+s).style.display=s===id?'':'none';});
-  document.querySelectorAll('#main-tabs .tab').forEach(t=>{
-    t.classList.toggle('active',t.textContent.toLowerCase().includes(id==='scales'?'scale':'akkorde'));
-  });
-  if(id==='chords') renderChords();
-}
 renderKeyTabs(); drawFretboard(); renderChords();
 
 // ============================================================
