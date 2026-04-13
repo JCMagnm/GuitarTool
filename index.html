@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -37,10 +38,13 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .metro { max-width: 420px; margin: 0 auto; }
 .bpm-display { font-size: 48px; font-weight: 500; color: var(--color-text-primary); text-align: center; line-height: 1; }
 .bpm-label { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-top: 4px; margin-bottom: 16px; }
-.bpm-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.bpm-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
 .bpm-row input[type=range] { flex: 1; }
 .bpm-btn { width: 36px; height: 36px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .1s; user-select: none; }
+.bpm-btn.small { font-size: 13px; width: 30px; height: 30px; color: var(--color-text-secondary); }
 .bpm-btn:hover { background: #333; }
+.bpm-fine-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 16px; }
+.bpm-fine-label { font-size: 11px; color: var(--color-text-secondary); }
 .beat-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
 .beat-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--color-border-secondary); transition: background .05s; }
 .beat-dot.accent { background: rgba(186,117,23,0.25); border: 1.5px solid rgba(186,117,23,0.6); }
@@ -92,7 +96,23 @@ svg.fb { display: block; }
 .tuning-row.active { border-color: #E8593C; background: rgba(232,89,60,0.08); }
 .tuning-row-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
 .tuning-row-notes { font-size: 12px; color: var(--color-text-secondary); font-family: var(--font-mono); }
+
+/* POLYRHYTHM */
+.poly-section { margin-top: 24px; padding-top: 16px; border-top: 0.5px solid var(–color-border-tertiary); }
+.poly-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; align-items: center; }
+.poly-voice { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.poly-voice-label { font-size: 11px; color: var(–color-text-secondary); }
+.poly-num { display: flex; align-items: center; gap: 6px; }
+.poly-num-display { font-size: 28px; font-weight: 500; width: 40px; text-align: center; }
+.poly-dots { display: flex; gap: 5px; justify-content: center; min-height: 14px; }
+.poly-dot { width: 14px; height: 14px; border-radius: 50%; background: var(–color-border-secondary); transition: background .05s; }
+.poly-dot.active-a { background: #3B8BD4 !important; }
+.poly-dot.active-b { background: #2eab6e !important; }
+.poly-vs { font-size: 18px; color: var(–color-text-secondary); font-weight: 500; padding-top: 16px; }
+.poly-play-btn { width: 100%; height: 44px; border-radius: var(–border-radius-md); border: 0.5px solid var(–color-border-secondary); background: var(–color-background-secondary); color: var(–color-text-primary); font-size: 14px; font-weight: 500; cursor: pointer; transition: background .1s; }
+.poly-play-btn.playing { border-color: rgba(255,255,255,0.4); }
 </style>
+
 </head>
 <body>
 
@@ -109,6 +129,7 @@ svg.fb { display: block; }
 </div>
 
 <!-- METRONOME PAGE -->
+
 <div class="page active" id="page-metro">
   <div class="metro">
     <div class="bpm-display" id="bpm-num">120</div>
@@ -117,6 +138,11 @@ svg.fb { display: block; }
       <button class="bpm-btn" onclick="changeBpm(-5)">−</button>
       <input type="range" min="30" max="240" value="120" id="bpm-slider" oninput="setBpm(+this.value)">
       <button class="bpm-btn" onclick="changeBpm(+5)">+</button>
+    </div>
+    <div class="bpm-fine-row">
+      <button class="bpm-btn small" onclick="changeBpm(-1)">−1</button>
+      <span class="bpm-fine-label">fine</span>
+      <button class="bpm-btn small" onclick="changeBpm(+1)">+1</button>
     </div>
     <div class="beat-row" id="beat-row"></div>
     <div class="controls">
@@ -129,10 +155,41 @@ svg.fb { display: block; }
     <div class="subdivide-row" id="sub-row">
       <span style="font-size:12px;color:var(--color-text-secondary);line-height:28px">Subdivision:</span>
     </div>
+
+```
+<!-- POLYRHYTHM -->
+<div class="poly-section">
+  <div class="label">Polyrhythm</div>
+  <div class="poly-grid">
+    <div class="poly-voice">
+      <div class="poly-voice-label">Voice A</div>
+      <div class="poly-num">
+        <button class="bpm-btn" onclick="changePoly('a',-1)">−</button>
+        <div class="poly-num-display" id="poly-a-num">3</div>
+        <button class="bpm-btn" onclick="changePoly('a',+1)">+</button>
+      </div>
+      <div class="poly-dots" id="poly-a-dots"></div>
+    </div>
+    <div class="poly-vs">vs</div>
+    <div class="poly-voice">
+      <div class="poly-voice-label">Voice B</div>
+      <div class="poly-num">
+        <button class="bpm-btn" onclick="changePoly('b',-1)">−</button>
+        <div class="poly-num-display" id="poly-b-num">4</div>
+        <button class="bpm-btn" onclick="changePoly('b',+1)">+</button>
+      </div>
+      <div class="poly-dots" id="poly-b-dots"></div>
+    </div>
+  </div>
+  <button class="poly-play-btn" id="poly-play-btn" onclick="togglePoly()">▶ Start Polyrhythm</button>
+</div>
+```
+
   </div>
 </div>
 
 <!-- SCALES PAGE -->
+
 <div class="page" id="page-scales">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en" onclick="setCSNotation('en')">English (B/Bb)</button>
@@ -159,6 +216,7 @@ svg.fb { display: block; }
 </div>
 
 <!-- CHORDS PAGE -->
+
 <div class="page" id="page-chords">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en-chords" onclick="setCSNotation('en')">English (B/Bb)</button>
@@ -189,6 +247,7 @@ svg.fb { display: block; }
 </div>
 
 <!-- TUNER PAGE -->
+
 <div class="page" id="page-tuner">
   <div class="tuner-wrap">
     <div class="notation-bar" style="width:100%">
@@ -212,6 +271,7 @@ svg.fb { display: block; }
 </div>
 
 <!-- CIRCLE OF FIFTHS PAGE -->
+
 <div class="page" id="page-qz">
   <div class="qz-wrap">
     <div style="display:flex;gap:8px;align-self:flex-end;margin-bottom:-8px">
@@ -359,19 +419,116 @@ SUBS.forEach(s=>{ const b=document.createElement('button'); b.className='sig-btn
 buildDots();
 
 // ============================================================
+// POLYRHYTHM
+// ============================================================
+let polyA=3, polyB=4;
+let polyPlaying=false, polyTimerID=null;
+let polyNextTimeA=0, polyNextTimeB=0;
+let polyBeatA=0, polyBeatB=0;
+let polyScheduled=[];
+
+function changePoly(voice, delta) {
+  if(voice==='a') polyA=Math.max(2,Math.min(9,polyA+delta));
+  else polyB=Math.max(2,Math.min(9,polyB+delta));
+  document.getElementById('poly-a-num').textContent=polyA;
+  document.getElementById('poly-b-num').textContent=polyB;
+  buildPolyDots();
+  if(polyPlaying) { stopPoly(); startPoly(); }
+}
+
+function buildPolyDots() {
+  document.getElementById('poly-a-dots').innerHTML=
+    Array.from({length:polyA},(_,i)=>`<div class="poly-dot" id="pad-${i}"></div>`).join('');
+  document.getElementById('poly-b-dots').innerHTML=
+    Array.from({length:polyB},(_,i)=>`<div class="poly-dot" id="pbd-${i}"></div>`).join('');
+}
+
+function schedulePolyClick(time, freq, vol) {
+  initAudio();
+  const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.frequency.value=freq;
+  gain.gain.setValueAtTime(vol, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time+0.08);
+  osc.start(time); osc.stop(time+0.09);
+}
+
+function polyScheduler() {
+  if(!audioCtx) return;
+  const barDur = (60/bpm) * 4; // one bar in seconds
+  const durA = barDur / polyA;
+  const durB = barDur / polyB;
+  const ahead = audioCtx.currentTime + scheduleAhead;
+
+  while(polyNextTimeA < ahead) {
+    schedulePolyClick(polyNextTimeA, 880, 0.5);
+    polyScheduled.push({time:polyNextTimeA, voice:'a', beat:polyBeatA%polyA});
+    polyBeatA++; polyNextTimeA+=durA;
+  }
+  while(polyNextTimeB < ahead) {
+    schedulePolyClick(polyNextTimeB, 440, 0.4);
+    polyScheduled.push({time:polyNextTimeB, voice:'b', beat:polyBeatB%polyB});
+    polyBeatB++; polyNextTimeB+=durB;
+  }
+
+  polyTimerID=setTimeout(polyScheduler, lookahead);
+  updatePolyDots();
+}
+
+function updatePolyDots() {
+  if(!audioCtx) return;
+  const now=audioCtx.currentTime;
+  const recent=polyScheduled.filter(b=>Math.abs(b.time-now)<0.04);
+  recent.forEach(b=>{
+    if(b.voice==='a') {
+      document.querySelectorAll('#poly-a-dots .poly-dot').forEach((d,i)=>d.classList.toggle('active-a',i===b.beat));
+    } else {
+      document.querySelectorAll('#poly-b-dots .poly-dot').forEach((d,i)=>d.classList.toggle('active-b',i===b.beat));
+    }
+  });
+  polyScheduled=polyScheduled.filter(b=>b.time>now-0.1);
+  if(polyPlaying) requestAnimationFrame(updatePolyDots);
+}
+
+function startPoly() {
+  initAudio();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  polyBeatA=0; polyBeatB=0;
+  polyNextTimeA=audioCtx.currentTime+0.05;
+  polyNextTimeB=audioCtx.currentTime+0.05;
+  polyScheduled=[];
+  polyPlaying=true;
+  polyScheduler();
+  const btn=document.getElementById('poly-play-btn');
+  btn.textContent='■ Stop Polyrhythm'; btn.classList.add('playing');
+}
+
+function stopPoly() {
+  polyPlaying=false;
+  clearTimeout(polyTimerID);
+  document.querySelectorAll('#poly-a-dots .poly-dot').forEach(d=>d.classList.remove('active-a'));
+  document.querySelectorAll('#poly-b-dots .poly-dot').forEach(d=>d.classList.remove('active-b'));
+  const btn=document.getElementById('poly-play-btn');
+  btn.textContent='▶ Start Polyrhythm'; btn.classList.remove('playing');
+}
+
+function togglePoly() {
+  if(polyPlaying) stopPoly(); else startPoly();
+}
+
+buildPolyDots();
+
+// ============================================================
 // TUNINGS
-// open = semitone values per string, low E (string 6) first
-// C=0 C#=1 D=2 D#=3 E=4 F=5 F#=6 G=7 G#=8 A=9 A#=10 B=11
 // ============================================================
 const TUNINGS=[
-  {name:'Standard',    notes:'E A D G B e',       open:[4,9,2,7,11,4],  freqs:[82.41,110.00,146.83,196.00,246.94,329.63]},
+  {name:'Standard',    notes:'E A D G B e',      open:[4,9,2,7,11,4],  freqs:[82.41,110.00,146.83,196.00,246.94,329.63]},
   {name:'Drop D',      notes:'D A D G B e',       open:[2,9,2,7,11,4],  freqs:[73.42,110.00,146.83,196.00,246.94,329.63]},
   {name:'Open E',      notes:'E B E G# B e',      open:[4,11,4,8,11,4], freqs:[82.41,123.47,164.81,207.65,246.94,329.63]},
   {name:'Open G',      notes:'D G D G B D',       open:[2,7,2,7,11,2],  freqs:[73.42,98.00,146.83,196.00,246.94,293.66]},
   {name:'Open D',      notes:'D A D F# A D',      open:[2,9,2,6,9,2],   freqs:[73.42,110.00,146.83,185.00,220.00,293.66]},
   {name:'DADGAD',      notes:'D A D G A D',       open:[2,9,2,7,9,2],   freqs:[73.42,110.00,146.83,196.00,220.00,293.66]},
   {name:'Drop C',      notes:'C G C F A D',       open:[0,7,0,5,9,2],   freqs:[65.41,98.00,130.81,174.61,220.00,293.66]},
-  {name:'Drop B',      notes:'B F# B E G# C#',    open:[11,6,11,4,8,1], freqs:[61.74,92.50,123.47,164.81,207.65,277.18]},
   {name:'Half step ↓', notes:'Eb Ab Db Gb Bb eb', open:[3,8,1,6,10,3],  freqs:[77.78,103.83,138.59,184.99,233.08,311.13]},
   {name:'Full step ↓', notes:'D G C F A D',       open:[2,7,0,5,9,2],   freqs:[73.42,98.00,130.81,174.61,220.00,293.66]},
 ];
@@ -398,9 +555,8 @@ function getScaleSemitones(k,s) { return SCALES[s].intervals.map(i=>(KEYS[k]+i)%
 
 function drawFretboard() {
   const tuning = TUNINGS.find(t=>t.name===currentScaleTuning) || TUNINGS[0];
-  // open[] is low-E first; fretboard draws high-e (index 0) at top, so reverse for display
   const OPEN = [...tuning.open].reverse();
-  const STRINGS = tuning.notes.split(' ').reverse(); // high-e first for display
+  const STRINGS = tuning.notes.split(' ').reverse();
 
   const svg=document.getElementById('fb-svg');
   const scaleTones=getScaleSemitones(currentKey,currentScale), root=KEYS[currentKey];
@@ -430,7 +586,6 @@ function setScale(s) {
   drawFretboard();
 }
 
-// Build scale tuning tabs
 const scaleTuningRow = document.getElementById('scale-tuning-tabs');
 TUNINGS.forEach(t => {
   const b = document.createElement('div');
@@ -803,7 +958,7 @@ function updateCapo() {
 }
 updateCapo();
 </script>
-  
+
 <script>
   if('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');
