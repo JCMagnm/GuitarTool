@@ -216,6 +216,11 @@ svg.fb { display: block; }
 
 <script>
 // ============================================================
+// Surpress double tap zoom on touchscreens
+// ============================================================
+document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
+
+// ============================================================
 // NOTATION SYSTEM
 // ============================================================
 let csNotation='en', qzNotation='en', tnNotation='en';
