@@ -176,6 +176,15 @@ svg.fb { display: block; }
       Standard tuning only
     </div>
     <div class="chord-grid" id="chord-grid"></div>
+    <div style="margin-top:24px;padding-top:16px;border-top:0.5px solid var(--color-border-tertiary)">
+      <div class="label">Capo Calculator</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <select id="capo-grip" style="background:var(--color-background-secondary);color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:12px"></select>
+        <span style="font-size:12px;color:var(--color-text-secondary)">sounds like</span>
+        <select id="capo-target" style="background:var(--color-background-secondary);color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:12px"></select>
+        <div id="capo-result" style="font-size:13px;color:var(--color-text-primary);font-weight:500"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -775,8 +784,25 @@ function tunerLoop() {
   }
   tunerRAF=requestAnimationFrame(tunerLoop);
 }
-</script>
 
+const CAPO_NOTES=['E','F','F#','G','G#','A','A#','B','C','C#','D','D#'];
+['capo-grip','capo-target'].forEach(id=>{
+  const sel=document.getElementById(id);
+  CAPO_NOTES.forEach((n,i)=>{
+    const o=document.createElement('option');
+    o.value=i; o.textContent=n; sel.appendChild(o);
+  });
+  sel.addEventListener('change', updateCapo);
+});
+function updateCapo() {
+  const grip=+document.getElementById('capo-grip').value;
+  const target=+document.getElementById('capo-target').value;
+  const fret=(target-grip+12)%12;
+  document.getElementById('capo-result').textContent = fret===0 ? 'No capo' : `Capo fret ${fret}`;
+}
+updateCapo();
+</script>
+  
 <script>
   if('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');
