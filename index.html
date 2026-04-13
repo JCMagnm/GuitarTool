@@ -100,13 +100,13 @@ svg.fb { display: block; }
 <div class="switcher">
   <button class="sw-btn active" onclick="showPage('metro')" id="sw-metro">
     <div class="playing-dot" id="playing-dot"></div>
-    Metronom
+    Metronome
     <div class="beat-indicator" id="beat-indicator"></div>
   </button>
   <button class="sw-btn" onclick="showPage('tuner')" id="sw-tuner">Tuner</button>
   <button class="sw-btn" onclick="showPage('scales')" id="sw-scales">Scales</button>
-  <button class="sw-btn" onclick="showPage('chords')" id="sw-chords">Akkorde</button>
-  <button class="sw-btn" onclick="showPage('qz')" id="sw-qz">Quintenzirkel</button>
+  <button class="sw-btn" onclick="showPage('chords')" id="sw-chords">Chords</button>
+  <button class="sw-btn" onclick="showPage('qz')" id="sw-qz">Circle of 5ths</button>
 </div>
 
 <!-- METRONOME PAGE -->
@@ -125,10 +125,10 @@ svg.fb { display: block; }
       <button class="tap-btn" onclick="tap()">Tap Tempo</button>
     </div>
     <div class="sig-row" id="sig-row">
-      <span style="font-size:12px;color:var(--color-text-secondary);margin-right:4px;line-height:28px">Takt:</span>
+      <span style="font-size:12px;color:var(--color-text-secondary);margin-right:4px;line-height:28px">Time Signature:</span>
     </div>
     <div class="subdivide-row" id="sub-row">
-      <span style="font-size:12px;color:var(--color-text-secondary);line-height:28px">Unterteilung:</span>
+      <span style="font-size:12px;color:var(--color-text-secondary);line-height:28px">Subdivision:</span>
     </div>
   </div>
 </div>
@@ -137,18 +137,18 @@ svg.fb { display: block; }
 <div class="page" id="page-scales">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en" onclick="setCSNotation('en')">English (B/Bb)</button>
-    <button class="tab" id="cs-btn-de" onclick="setCSNotation('de')">Deutsch (H/B)</button>
+    <button class="tab" id="cs-btn-de" onclick="setCSNotation('de')">German (H/B)</button>
   </div>
   <div id="sec-scales" class="section">
-    <div class="label">Tonart wählen</div>
+    <div class="label">Select Key</div>
     <div class="tabs" id="key-tabs"></div>
-    <div class="label">Scale wählen</div>
+    <div class="label">Select Scale</div>
     <div class="tabs" id="scale-tabs">
-      <div class="tab active" onclick="setScale('pentatonic_minor')">Penta Moll</div>
-      <div class="tab" onclick="setScale('pentatonic_major')">Penta Dur</div>
+      <div class="tab active" onclick="setScale('pentatonic_minor')">Minor Pentatonic</div>
+      <div class="tab" onclick="setScale('pentatonic_major')">Major Pentatonic</div>
       <div class="tab" onclick="setScale('blues')">Blues</div>
-      <div class="tab" onclick="setScale('natural_minor')">Nat. Moll</div>
-      <div class="tab" onclick="setScale('major')">Dur</div>
+      <div class="tab" onclick="setScale('natural_minor')">Natural Minor</div>
+      <div class="tab" onclick="setScale('major')">Major</div>
     </div>
     <div class="fretboard">
       <svg class="fb" id="fb-svg" width="100%" viewBox="0 0 640 180"></svg>
@@ -161,15 +161,15 @@ svg.fb { display: block; }
 <div class="page" id="page-chords">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en-chords" onclick="setCSNotation('en')">English (B/Bb)</button>
-    <button class="tab" id="cs-btn-de-chords" onclick="setCSNotation('de')">Deutsch (H/B)</button>
+    <button class="tab" id="cs-btn-de-chords" onclick="setCSNotation('de')">German (H/B)</button>
   </div>
   <div id="sec-chords" class="section">
-    <div class="label">Kategorie</div>
+    <div class="label">Category</div>
     <div class="tabs" id="chord-cat-tabs">
-      <div class="tab active" onclick="setChordCat('all')">Alle</div>
-      <div class="tab" onclick="setChordCat('basic')">Grundakkorde</div>
-      <div class="tab" onclick="setChordCat('7th')">Septime</div>
-      <div class="tab" onclick="setChordCat('barre')">Barré</div>
+      <div class="tab active" onclick="setChordCat('all')">All</div>
+      <div class="tab" onclick="setChordCat('basic')">Basic</div>
+      <div class="tab" onclick="setChordCat('7th')">7th</div>
+      <div class="tab" onclick="setChordCat('barre')">Barre</div>
     </div>
     <div class="chord-grid" id="chord-grid"></div>
   </div>
@@ -180,7 +180,7 @@ svg.fb { display: block; }
   <div class="tuner-wrap">
     <div class="notation-bar" style="width:100%">
       <button class="tab active" id="tn-btn-en" onclick="setTunerNotation('en')">English (B/Bb)</button>
-      <button class="tab" id="tn-btn-de" onclick="setTunerNotation('de')">Deutsch (H/B)</button>
+      <button class="tab" id="tn-btn-de" onclick="setTunerNotation('de')">German (H/B)</button>
     </div>
     <div class="tuner-display">
       <div class="tuner-note" id="tuner-note">–</div>
@@ -191,26 +191,26 @@ svg.fb { display: block; }
       </div>
       <div class="tuner-cents" id="tuner-cents"></div>
     </div>
-    <button class="tuner-btn" id="tuner-btn" onclick="toggleTuner()">Mikrofon aktivieren</button>
+    <button class="tuner-btn" id="tuner-btn" onclick="toggleTuner()">Enable Microphone</button>
     <div class="tuner-status" id="tuner-status"></div>
-    <div class="label" style="align-self:flex-start">Tuning wählen</div>
+    <div class="label" style="align-self:flex-start">Select Tuning</div>
     <div class="tuning-list" id="tuning-list"></div>
   </div>
 </div>
 
-<!-- QUINTENZIRKEL PAGE -->
+<!-- CIRCLE OF FIFTHS PAGE -->
 <div class="page" id="page-qz">
   <div class="qz-wrap">
     <div style="display:flex;gap:8px;align-self:flex-end;margin-bottom:-8px">
       <button class="tab active" id="qz-btn-en" onclick="setQZNotation('en')">English (B/Bb)</button>
-      <button class="tab" id="qz-btn-de" onclick="setQZNotation('de')">Deutsch (H/B)</button>
+      <button class="tab" id="qz-btn-de" onclick="setQZNotation('de')">German (H/B)</button>
     </div>
     <div class="qz-info">
-      <div class="qz-key" id="qz-key">Klick auf eine Tonart</div>
+      <div class="qz-key" id="qz-key">Click a key</div>
       <div class="qz-chords" id="qz-chords"></div>
     </div>
     <svg id="qz-svg" width="100%" viewBox="0 0 500 500" style="max-width:480px"></svg>
-    <div class="qz-hint">Dur außen · Moll innen · Klick zum Auswählen</div>
+    <div class="qz-hint">Major outer · Minor inner · Click to select</div>
   </div>
 </div>
 
@@ -351,11 +351,11 @@ buildDots();
 const STRINGS_EN=['e','B','G','D','A','E'], OPEN=[4,11,7,2,9,4];
 const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const SCALES={
-  pentatonic_minor:{intervals:[0,3,5,7,10],   name:'Pentatonik Moll', desc:'Das Fundament von Blues, Rock. 5 Töne, klingt fast immer gut.'},
-  pentatonic_major:{intervals:[0,2,4,7,9],    name:'Pentatonik Dur',  desc:'Heller, country-lastiger Klang. Gleiche Griffmuster wie Penta Moll — nur 3 Bünde versetzt.'},
-  blues:           {intervals:[0,3,5,6,7,10], name:'Blues Scale',     desc:'Pentatonik Moll + Blue Note (b5). Der Seufzer-Ton der jedem Riff Ausdruck gibt.'},
-  natural_minor:   {intervals:[0,2,3,5,7,8,10],name:'Natürliches Moll',desc:'7 Töne, melancholischer Charakter. Basis für klassische Musik & Metal.'},
-  major:           {intervals:[0,2,4,5,7,9,11],name:'Dur',            desc:'Hell, fröhlich.'},
+  pentatonic_minor:{intervals:[0,3,5,7,10],   name:'Minor Pentatonic', desc:'The foundation of blues and rock. 5 notes, works over almost anything.'},
+  pentatonic_major:{intervals:[0,2,4,7,9],    name:'Major Pentatonic', desc:'Brighter sound than minor pentatonic. Same shapes, just shifted 3 frets up.'},
+  blues:           {intervals:[0,3,5,6,7,10], name:'Blues Scale',      desc:'Minor pentatonic + flat 5 "blue note". Adds tension and expression.'},
+  natural_minor:   {intervals:[0,2,3,5,7,8,10],name:'Natural Minor',  desc:'7 notes, melancholic character. Common in rock, metal and classical.'},
+  major:           {intervals:[0,2,4,5,7,9,11],name:'Major',          desc:'7 notes, bright and resolved. The most fundamental scale in Western music.'},
 };
 const KEY_NAMES=['A','E','D','G','C','B'], KEYS={A:9,E:4,D:2,G:7,C:0,B:11};
 let currentKey='A', currentScale='pentatonic_minor';
@@ -384,7 +384,7 @@ function drawFretboard() {
   svg.innerHTML=html;
   const sc=SCALES[currentScale], toneNames=getScaleSemitones(currentKey,currentScale).map(t=>NOTE_NAMES[t]);
   document.getElementById('scale-info').innerHTML=
-    `<strong>${n(currentKey,csNotation)} ${sc.name}</strong> — ${sc.desc}<br>` +
+    `<strong>${csNotation} ${sc.name}</strong> — ${sc.desc}<br>` +
     `<div style="margin-top:6px">${toneNames.map(t=>`<span class="pill">${n(t,csNotation)}</span>`).join('')}</div>`;
 }
 function setKey(k) { currentKey=k; renderKeyTabs(); drawFretboard(); }
@@ -530,7 +530,7 @@ function renderChords() {
 renderKeyTabs(); drawFretboard(); renderChords();
 
 // ============================================================
-// QUINTENZIRKEL
+// CIRCLE OF FIFTHS
 // ============================================================
 const QZ_KEYS_MAJ=['C','G','D','A','E','B','F#/Gb','Db','Ab','Eb','Bb','F'];
 const QZ_KEYS_MIN=['Am','Em','Bm','F#m','C#m','G#m','D#m/Ebm','Bbm','Fm','Cm','Gm','Dm'];
@@ -587,22 +587,19 @@ function drawQZ(sel) {
 }
 function qzUpdateInfo(key) {
   const info=document.getElementById('qz-key'),chords=document.getElementById('qz-chords');
-  info.textContent=qn(key)+' Dur'; info.style.color='#E8593C';
-  chords.innerHTML='I–VII: '+QZ_DATA[key].chords.join('  ·  ')+'<br>Mollparallele: '+qn(QZ_DATA[key].rel);
+  info.textContent=qn(key)+' Major'; info.style.color='#E8593C';
+  chords.innerHTML='I–VII: '+QZ_DATA[key].chords.join('  ·  ')+'<br>Relative minor: '+qn(QZ_DATA[key].rel);
 }
 function qzSelect(key) {
   qzSelected=qzSelected===key?null:key; drawQZ(qzSelected);
   const info=document.getElementById('qz-key'),chords=document.getElementById('qz-chords');
   if(qzSelected&&QZ_DATA[qzSelected]) qzUpdateInfo(qzSelected);
-  else { info.textContent='Klick auf eine Tonart'; info.style.color='var(--color-text-primary)'; chords.textContent=''; }
+  else { info.textContent='Click a key'; info.style.color='var(--color-text-primary)'; chords.textContent=''; }
 }
 drawQZ(null);
 
 // ============================================================
 // TUNER
-// Clean rewrite – no index gymnastics.
-// activeTuning = null → free mode (nearest semitone)
-// activeTuning = object → tuning mode (nearest string in tuning)
 // ============================================================
 const CHROMATIC=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 
@@ -618,7 +615,6 @@ const TUNINGS=[
   {name:'Full step ↓', notes:'D G C F A D',  freqs:[73.42,98.00,130.81,174.61,220.00,293.66]},
 ];
 
-// null = free mode
 let activeTuning = null;
 let tunerActive=false, tunerStream=null, tunerAudioCtx=null, tunerAnalyser=null, tunerRAF=null, tunerBuf=null;
 
@@ -632,8 +628,8 @@ function renderTuningList() {
   });
   const freeActive = activeTuning === null;
   const freeRow = `<div class="tuning-row${freeActive?' active':''}" onclick="selectTuning(null)">
-    <div class="tuning-row-name">Frei</div>
-    <div class="tuning-row-notes">Nächster Halbton</div>
+    <div class="tuning-row-name">Free</div>
+    <div class="tuning-row-notes">Nearest semitone</div>
   </div>`;
   document.getElementById('tuning-list').innerHTML = freeRow + rows.join('');
 }
@@ -644,7 +640,6 @@ function selectTuning(name) {
 }
 renderTuningList();
 
-// Pitch detection via autocorrelation
 function detectPitch(buf, sampleRate) {
   let rms=0;
   for(let i=0;i<buf.length;i++) rms+=buf[i]*buf[i];
@@ -665,14 +660,12 @@ function detectPitch(buf, sampleRate) {
   for(let i=peak;i<len;i++) if(corr[i]>maxVal){maxVal=corr[i];maxPos=i;}
   if(maxPos<1) return null;
 
-  // Parabolic interpolation for sub-sample accuracy
   const a=corr[maxPos-1], b=corr[maxPos], c=corr[maxPos+1];
   const refined = maxPos + (c-a)/(2*(2*b-a-c));
   const freq = sampleRate/refined;
   return (freq>50&&freq<1400) ? freq : null;
 }
 
-// Convert frequency to note name, octave, cents deviation
 function freqInfo(freq) {
   const semitones = 12*Math.log2(freq/440);
   const rounded = Math.round(semitones);
@@ -683,7 +676,6 @@ function freqInfo(freq) {
   return { noteName: CHROMATIC[noteIdx], octave, cents };
 }
 
-// Find nearest string in a tuning
 function nearestString(freq, tuning) {
   let bestIdx=0, bestCents=Infinity;
   tuning.freqs.forEach((f,i)=>{
@@ -707,12 +699,12 @@ async function toggleTuner() {
     source.connect(tunerAnalyser);
     tunerBuf=new Float32Array(tunerAnalyser.fftSize);
     tunerActive=true;
-    document.getElementById('tuner-btn').textContent='■ Stopp';
+    document.getElementById('tuner-btn').textContent='■ Stop';
     document.getElementById('tuner-btn').classList.add('active');
     document.getElementById('tuner-status').textContent='';
     tunerLoop();
   } catch(e) {
-    document.getElementById('tuner-status').textContent='Mikrofonzugriff verweigert oder nicht verfügbar.';
+    document.getElementById('tuner-status').textContent='Microphone access denied or unavailable.';
   }
 }
 
@@ -722,7 +714,7 @@ function stopTuner() {
   if(tunerStream) tunerStream.getTracks().forEach(t=>t.stop());
   if(tunerAudioCtx) tunerAudioCtx.close();
   tunerStream=tunerAudioCtx=tunerAnalyser=null;
-  document.getElementById('tuner-btn').textContent='Mikrofon aktivieren';
+  document.getElementById('tuner-btn').textContent='Enable Microphone';
   document.getElementById('tuner-btn').classList.remove('active');
   tunerSetDisplay(null);
 }
@@ -746,7 +738,7 @@ function tunerSetDisplay(data) {
   const {noteName, octave, cents, info} = data;
   noteEl.textContent = n(noteName, tnNotation) + octave;
   infoEl.textContent = info;
-  centsEl.textContent = cents===0 ? '♦ gestimmt' : cents>0 ? `+${cents} Cents (zu hoch)` : `${cents} Cents (zu tief)`;
+  centsEl.textContent = cents===0 ? '♦ in tune' : cents>0 ? `+${cents} cents (too high)` : `${cents} cents (too low)`;
   needleEl.style.left = Math.max(5,Math.min(95, 50+(cents/50)*45))+'%';
   meterEl.classList.toggle('in-tune', Math.abs(cents)<5);
 }
@@ -760,19 +752,17 @@ function tunerLoop() {
     const {noteName, octave, cents: freeCents} = freqInfo(freq);
 
     if(activeTuning===null) {
-      // Free mode
       tunerSetDisplay({
         noteName, octave,
         cents: freeCents,
         info: freq.toFixed(1)+' Hz'
       });
     } else {
-      // Tuning mode
       const {stringName, cents: tuningCents} = nearestString(freq, activeTuning);
       tunerSetDisplay({
         noteName, octave,
         cents: tuningCents,
-        info: freq.toFixed(1)+' Hz  ·  Saite: '+stringName
+        info: freq.toFixed(1)+' Hz  ·  String: '+stringName
       });
     }
   } else {
