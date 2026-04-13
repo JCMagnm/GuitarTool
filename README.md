@@ -4,8 +4,8 @@ A personal guitar learning tool I built for myself – because I needed exactly 
 
 ## Features
 
-- **Metronome** – with time signature, subdivisions and tap tempo (PWA recommended on iOS)
-- **Guitar tuner** – chromatic tuner using the device microphone; select a tuning to lock to its strings, or use free mode for nearest semitone; displays note, cents deviation and needle
+- **Metronome** – with time signature, subdivisions and tap tempo
+- **Guitar tuner** – chromatic tuner using the device microphone; select a tuning to lock to its strings, or use free mode for nearest semitone; displays note, cents deviation and tuning meter
 - **Scales** – interactive fretboard with pentatonic, blues, minor and major
 - **Chords** – fingering diagrams with finger numbers, filterable by category
 - **Circle of fifths** – interactive, shows chords and relative minor per key
