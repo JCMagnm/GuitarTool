@@ -625,100 +625,52 @@ renderKeyTabs(); drawFretboard();
 // CHORDS
 // ============================================================
 const CHORD_DATA={
-  all:[
-    {name:'C',    fingers:[[3,3,5],[2,2,4],[1,1,2]],            mute:[6],   open:[1,3]},
-    {name:'Cm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[]},
-    {name:'C7',   fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],    mute:[6],   open:[1]},
-    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                    mute:[6],   open:[1,2,3]},
-    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[]},
-    {name:'D',    fingers:[[2,1,3],[3,3,2],[2,2,1]],            mute:[5,6], open:[4]},
-    {name:'Dm',   fingers:[[2,2,3],[3,3,2],[1,1,1]],            mute:[5,6], open:[4]},
-    {name:'D7',   fingers:[[2,3,3],[1,1,2],[2,2,1]],            mute:[5,6], open:[4]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                        mute:[5,6], open:[4]},
-    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],                mute:[5,6], open:[4]},
-    {name:'E',    fingers:[[2,2,5],[2,3,4],[1,1,3]],            mute:[],    open:[1,2,6]},
-    {name:'Em',   fingers:[[2,2,5],[2,3,4]],                    mute:[],    open:[1,2,3,6]},
-    {name:'E7',   fingers:[[2,2,5],[1,1,3]],                    mute:[],    open:[1,2,4,6]},
-    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],            mute:[1],   open:[2,6]},
-    {name:'Em7',  fingers:[[2,2,5],[2,3,4],[3,4,2]],            mute:[],    open:[1,3,6]},
-    {name:'F',    fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[]},
-    {name:'Fm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[]},
-    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],        mute:[],    open:[]},
-    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],            mute:[5,6], open:[1]},
-    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[]},
-    {name:'G',    fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],    mute:[],    open:[3,4]},
-    {name:'Gm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],  startFret:3},
-    {name:'G7',   fingers:[[3,3,6],[2,2,5],[1,1,1]],            mute:[],    open:[2,3,4]},
-    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],            mute:[],    open:[2,3,4]},
-    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],  startFret:3},
-    {name:'A',    fingers:[[2,1,4],[2,2,3],[2,3,2]],            mute:[6],   open:[1,5]},
-    {name:'Am',   fingers:[[2,3,4],[2,2,3],[1,1,2]],            mute:[6],   open:[1,5]},
-    {name:'A7',   fingers:[[2,2,4],[2,3,2]],                    mute:[6],   open:[1,3,5]},
-    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],            mute:[6],   open:[1,5]},
-    {name:'Am7',  fingers:[[2,2,4],[1,1,2]],                    mute:[6],   open:[1,3,5]},
-    {name:'B',    fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]],mute:[6],   open:[],  startFret:2},
-    {name:'Bm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[],  startFret:2},
-    {name:'B7',   fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],    mute:[6],   open:[2]},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],   open:[],  startFret:2},
-    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2},
+  standard:[
+    {name:'C',    fingers:[[3,3,5],[2,2,4],[1,1,2]],            mute:[6],   open:[1,3],  tags:['basic']},
+    {name:'Cm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[],     tags:['basic','barre']},
+    {name:'C7',   fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],    mute:[6],   open:[1],    tags:['7th']},
+    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                    mute:[6],   open:[1,2,3],tags:['7th']},
+    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],     tags:['barre','7th']},
+    {name:'D',    fingers:[[2,1,3],[3,3,2],[2,2,1]],            mute:[5,6], open:[4],    tags:['basic']},
+    {name:'Dm',   fingers:[[2,2,3],[3,3,2],[1,1,1]],            mute:[5,6], open:[4],    tags:['basic']},
+    {name:'D7',   fingers:[[2,3,3],[1,1,2],[2,2,1]],            mute:[5,6], open:[4],    tags:['7th']},
+    {name:'Dmaj7',fingers:[[2,1,'1-3']],                        mute:[5,6], open:[4],    tags:['barre','7th']},
+    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],                mute:[5,6], open:[4],    tags:['barre','7th']},
+    {name:'E',    fingers:[[2,2,5],[2,3,4],[1,1,3]],            mute:[],    open:[1,2,6],tags:['basic']},
+    {name:'Em',   fingers:[[2,2,5],[2,3,4]],                    mute:[],    open:[1,2,3,6],tags:['basic']},
+    {name:'E7',   fingers:[[2,2,5],[1,1,3]],                    mute:[],    open:[1,2,4,6],tags:['7th']},
+    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],            mute:[1],   open:[2,6],  tags:['7th']},
+    {name:'Em7',  fingers:[[2,2,5],[2,3,4],[3,4,2]],            mute:[],    open:[1,3,6],tags:['7th']},
+    {name:'F',    fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[],     tags:['basic','barre']},
+    {name:'Fm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],     tags:['basic','barre']},
+    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],        mute:[],    open:[],     tags:['barre','7th']},
+    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],            mute:[5,6], open:[1],    tags:['7th']},
+    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],     tags:['barre','7th']},
+    {name:'G',    fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],    mute:[],    open:[3,4],  tags:['basic']},
+    {name:'Gm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],  startFret:3, tags:['basic','barre']},
+    {name:'G7',   fingers:[[3,3,6],[2,2,5],[1,1,1]],            mute:[],    open:[2,3,4],tags:['7th']},
+    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],            mute:[],    open:[2,3,4],tags:['7th']},
+    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],  startFret:3, tags:['barre','7th']},
+    {name:'A',    fingers:[[2,1,4],[2,2,3],[2,3,2]],            mute:[6],   open:[1,5],  tags:['basic']},
+    {name:'Am',   fingers:[[2,3,4],[2,2,3],[1,1,2]],            mute:[6],   open:[1,5],  tags:['basic']},
+    {name:'A7',   fingers:[[2,2,4],[2,3,2]],                    mute:[6],   open:[1,3,5],tags:['7th']},
+    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],            mute:[6],   open:[1,5],  tags:['7th']},
+    {name:'Am7',  fingers:[[2,2,4],[1,1,2]],                    mute:[6],   open:[1,3,5],tags:['7th']},
+    {name:'B',    fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]],mute:[6],   open:[],  startFret:2, tags:['basic','barre']},
+    {name:'Bm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[],  startFret:2, tags:['basic','barre']},
+    {name:'B7',   fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],    mute:[6],   open:[2],    tags:['7th']},
+    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],   open:[],  startFret:2, tags:['barre','7th']},
+    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2, tags:['barre','7th']},
   ],
-  basic:[
-    {name:'C',  fingers:[[3,3,5],[2,2,4],[1,1,2]],             mute:[6],   open:[1,3]},
-    {name:'Cm', fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[]},
-    {name:'D',  fingers:[[2,1,3],[3,3,2],[2,2,1]],             mute:[5,6], open:[4]},
-    {name:'Dm', fingers:[[2,2,3],[3,3,2],[1,1,1]],             mute:[5,6], open:[4]},
-    {name:'E',  fingers:[[2,2,5],[2,3,4],[1,1,3]],             mute:[],    open:[1,2,6]},
-    {name:'Em', fingers:[[2,2,5],[2,3,4]],                     mute:[],    open:[1,2,3,6]},
-    {name:'F',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]], mute:[],    open:[]},
-    {name:'Fm', fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[]},
-    {name:'G',  fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],     mute:[],    open:[3,4]},
-    {name:'Gm', fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[],  startFret:3},
-    {name:'A',  fingers:[[2,1,4],[2,2,3],[2,3,2]],             mute:[6],   open:[1,5]},
-    {name:'Am', fingers:[[2,3,4],[2,2,3],[1,1,2]],             mute:[6],   open:[1,5]},
-    {name:'B',  fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
-    {name:'Bm', fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[],  startFret:2},
-  ],
-  barre:[
-    {name:'Cm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[]},
-    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                        mute:[5,6], open:[4]},
-    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],                mute:[5,6], open:[4]},
-    {name:'F',    fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[]},
-    {name:'Fm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[]},
-    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],        mute:[],    open:[]},
-    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[]},
-    {name:'Gm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],  startFret:3},
-    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],  startFret:3},
-    {name:'B',    fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]],mute:[6],   open:[],  startFret:2},
-    {name:'Bm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[],  startFret:2},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],   open:[],  startFret:2},
-    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2},
-  ],
-  '7th':[
-    {name:'C7',   fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],   mute:[6],   open:[1]},
-    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                   mute:[6],   open:[1,2,3]},
-    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],       mute:[6],   open:[]},
-    {name:'D7',   fingers:[[2,3,3],[1,1,2],[2,2,1]],           mute:[5,6], open:[4]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                       mute:[5,6], open:[4]},
-    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],               mute:[5,6], open:[4]},
-    {name:'E7',   fingers:[[2,2,5],[1,1,3]],                   mute:[],    open:[1,2,4,6]},
-    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],           mute:[1],   open:[2,6]},
-    {name:'Em7',  fingers:[[2,2,5],[2,3,4],[3,4,2]],           mute:[],    open:[1,3,6]},
-    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],       mute:[],    open:[]},
-    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],           mute:[5,6], open:[1]},
-    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],               mute:[],    open:[]},
-    {name:'G7',   fingers:[[3,3,6],[2,2,5],[1,1,1]],           mute:[],    open:[2,3,4]},
-    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],           mute:[],    open:[2,3,4]},
-    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],               mute:[],    open:[],  startFret:3},
-    {name:'A7',   fingers:[[2,2,4],[2,3,2]],                   mute:[6],   open:[1,3,5]},
-    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],           mute:[6],   open:[1,5]},
-    {name:'Am7',  fingers:[[2,2,4],[1,1,2]],                   mute:[6],   open:[1,3,5]},
-    {name:'B7',   fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],   mute:[6],   open:[2]},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],  open:[],  startFret:2},
-    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],       mute:[6],   open:[],  startFret:2},
+  dropd:[
+    {name:'C',    fingers:[[3,3,5],[2,2,4],[1,1,2]],            mute:[6],   open:[1,3],  tags:['basic']},
+    {name:'Cm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[],     tags:['basic','barre']},
   ],
 };
+
+let currentChordTuning='standard'
 let currentChordCat='all';
+
 function drawChord(chord) {
   const W=72,H=88,padL=12,padT=22,fretH=13,strW=9,frets=4,strings=6;
   const fc=['','#E8593C','#3B8BD4','#2eab6e','#8B5CF6'];
@@ -745,16 +697,21 @@ function drawChord(chord) {
   });
   h+='</svg>'; return h;
 }
+
 function setChordCat(cat) {
-  currentChordCat=cat;
-  document.querySelectorAll('#chord-cat-tabs .tab').forEach(t=>t.classList.toggle('active',t.onclick.toString().includes(cat)));
+  currentChordCat = cat;
+  document.querySelectorAll('#chord-cat-tabs .tab').forEach(t=>t.classList.toggle('active', t.onclick.toString().includes("'"+cat+"'")));
   renderChords();
 }
 function renderChords() {
-  document.getElementById('chord-grid').innerHTML=CHORD_DATA[currentChordCat].map(c=>
-    `<div class="chord-card"><div class="chord-name">${n(c.name,csNotation)}</div>${drawChord(c)}</div>`).join('');
+  const tuningData = CHORD_DATA[currentChordTuning] || [];
+  const filtered = currentChordCat === 'all'
+    ? tuningData
+    : tuningData.filter(c => c.tags.includes(currentChordCat));
+  document.getElementById('chord-grid').innerHTML = filtered.map(c =>
+    `<div class="chord-card"><div class="chord-name">${n(c.name, csNotation)}</div>${drawChord(c)}</div>`
+  ).join('');
 }
-renderChords();
 
 // ============================================================
 // CIRCLE OF FIFTHS
