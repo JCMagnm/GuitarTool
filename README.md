@@ -23,6 +23,7 @@ Just open it in a browser – or add it to your home screen on iOS/Android for a
 Microphone access (for the tuner) is remembered by the browser after the first permission prompt. On iOS, this may reset after long periods of inactivity.
 
 ## Known Issues
+
 - **Tap Tempo double-tap zoom on iOS Safari**: The browser version triggers 
   iOS Safari's double-tap zoom when tapping quickly. This is a Safari bug 
   (`touch-action: manipulation` is ignored in browser context). 
@@ -30,4 +31,5 @@ Microphone access (for the tuner) is remembered by the browser after the first p
 
 ## Credits
 
-App icon: <a href="https://www.flaticon.com/free-icons/electric-guitar" title="electric guitar icons">Electric guitar icons created by Freepik - Flaticon</a>
+- App icon: <a href="https://www.flaticon.com/free-icons/electric-guitar" title="electric guitar icons">Electric guitar icons created by Freepik - Flaticon</a>
+- Developed in collaboration with [Claude](https://claude.ai) (Anthropic) as AI coding assistant.
