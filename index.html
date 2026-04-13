@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -25,6 +24,8 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
 body { background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); }
+
+/* ---- NAV ---- */
 .switcher { display: flex; border-bottom: 0.5px solid var(--color-border-tertiary); padding: 0 8px; position: sticky; top: 0; background: var(--color-background-primary); z-index: 10; }
 .sw-btn { flex: 1; padding: 12px 0; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .sw-btn.active { color: var(--color-text-primary); border-bottom-color: #E8593C; }
@@ -33,8 +34,21 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .beat-indicator.pulse { opacity: 1; }
 .playing-dot { width: 6px; height: 6px; border-radius: 50%; background: #E8593C; display: none; }
 .playing-dot.visible { display: block; }
+
+/* ---- PAGES ---- */
 .page { display: none; padding: 16px; }
 .page.active { display: block; }
+.section { margin-bottom: 1.5rem; }
+.label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+
+/* ---- SHARED ---- */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.tab { font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all .15s; }
+.tab.active { background: #1a1a1a; color: var(--color-text-primary); border-color: rgba(255,255,255,0.4); font-weight: 500; }
+.notation-bar { display: flex; gap: 6px; justify-content: flex-end; margin-bottom: 12px; }
+.pill { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 99px; border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); margin: 2px; }
+
+/* ---- METRONOME ---- */
 .metro { max-width: 420px; margin: 0 auto; }
 .bpm-display { font-size: 48px; font-weight: 500; color: var(--color-text-primary); text-align: center; line-height: 1; }
 .bpm-label { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-top: 4px; margin-bottom: 16px; }
@@ -58,26 +72,42 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .sig-btn { font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all .1s; }
 .sig-btn.active { background: #1a1a1a; color: var(--color-text-primary); border-color: rgba(255,255,255,0.4); font-weight: 500; }
 .subdivide-row { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
-.section { margin-bottom: 1.5rem; }
-.label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-.tab { font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all .15s; }
-.tab.active { background: #1a1a1a; color: var(--color-text-primary); border-color: rgba(255,255,255,0.4); font-weight: 500; }
-.notation-bar { display: flex; gap: 6px; justify-content: flex-end; margin-bottom: 12px; }
+
+/* ---- POLYRHYTHM ---- */
+.poly-section { margin-top: 24px; padding-top: 16px; border-top: 0.5px solid var(--color-border-tertiary); }
+.poly-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; align-items: center; }
+.poly-voice { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.poly-voice-label { font-size: 11px; color: var(--color-text-secondary); }
+.poly-num { display: flex; align-items: center; gap: 6px; }
+.poly-num-display { font-size: 28px; font-weight: 500; width: 40px; text-align: center; }
+.poly-dots { display: flex; gap: 5px; justify-content: center; min-height: 14px; }
+.poly-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--color-border-secondary); transition: background .05s; }
+.poly-dot.active-a { background: #3B8BD4 !important; }
+.poly-dot.active-b { background: #2eab6e !important; }
+.poly-vs { font-size: 18px; color: var(--color-text-secondary); font-weight: 500; padding-top: 16px; }
+.poly-play-btn { width: 100%; height: 44px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 14px; font-weight: 500; cursor: pointer; transition: background .1s; }
+.poly-play-btn.playing { border-color: rgba(255,255,255,0.4); }
+
+/* ---- SCALES ---- */
 .fretboard { width: 100%; overflow-x: auto; }
 svg.fb { display: block; }
+.scale-info { font-size: 12px; color: var(--color-text-secondary); margin-top: 8px; line-height: 1.6; }
+
+/* ---- CHORDS ---- */
 .chord-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 5px; }
 .chord-card { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px; text-align: center; cursor: pointer; transition: border-color .15s; min-height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .chord-card:hover { border-color: rgba(255,255,255,0.4); }
 .chord-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
 .chord-svg { display: block; margin: 0 auto; }
-.scale-info { font-size: 12px; color: var(--color-text-secondary); margin-top: 8px; line-height: 1.6; }
-.pill { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 99px; border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); margin: 2px; }
+
+/* ---- CIRCLE OF FIFTHS ---- */
 .qz-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .qz-info { text-align: center; min-height: 56px; }
 .qz-key { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
 .qz-chords { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.7; }
 .qz-hint { font-size: 11px; color: var(--color-text-secondary); opacity: 0.5; }
+
+/* ---- TUNER ---- */
 .tuner-wrap { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .tuner-display { width: 100%; background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 24px 16px 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .tuner-note { font-size: 72px; font-weight: 500; line-height: 1; color: var(--color-text-primary); }
@@ -96,23 +126,7 @@ svg.fb { display: block; }
 .tuning-row.active { border-color: #E8593C; background: rgba(232,89,60,0.08); }
 .tuning-row-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
 .tuning-row-notes { font-size: 12px; color: var(--color-text-secondary); font-family: var(--font-mono); }
-
-/* POLYRHYTHM */
-.poly-section { margin-top: 24px; padding-top: 16px; border-top: 0.5px solid var(–color-border-tertiary); }
-.poly-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; align-items: center; }
-.poly-voice { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.poly-voice-label { font-size: 11px; color: var(–color-text-secondary); }
-.poly-num { display: flex; align-items: center; gap: 6px; }
-.poly-num-display { font-size: 28px; font-weight: 500; width: 40px; text-align: center; }
-.poly-dots { display: flex; gap: 5px; justify-content: center; min-height: 14px; }
-.poly-dot { width: 14px; height: 14px; border-radius: 50%; background: var(–color-border-secondary); transition: background .05s; }
-.poly-dot.active-a { background: #3B8BD4 !important; }
-.poly-dot.active-b { background: #2eab6e !important; }
-.poly-vs { font-size: 18px; color: var(–color-text-secondary); font-weight: 500; padding-top: 16px; }
-.poly-play-btn { width: 100%; height: 44px; border-radius: var(–border-radius-md); border: 0.5px solid var(–color-border-secondary); background: var(–color-background-secondary); color: var(–color-text-primary); font-size: 14px; font-weight: 500; cursor: pointer; transition: background .1s; }
-.poly-play-btn.playing { border-color: rgba(255,255,255,0.4); }
 </style>
-
 </head>
 <body>
 
@@ -128,10 +142,13 @@ svg.fb { display: block; }
   <button class="sw-btn" onclick="showPage('qz')" id="sw-qz">Circle of 5ths</button>
 </div>
 
-<!-- METRONOME PAGE -->
-
+<!-- ============================================================
+     METRONOME PAGE
+     ============================================================ -->
 <div class="page active" id="page-metro">
   <div class="metro">
+
+    <!-- BPM -->
     <div class="bpm-display" id="bpm-num">120</div>
     <div class="bpm-label">BPM</div>
     <div class="bpm-row">
@@ -144,51 +161,84 @@ svg.fb { display: block; }
       <span class="bpm-fine-label">fine</span>
       <button class="bpm-btn small" onclick="changeBpm(+1)">+1</button>
     </div>
+
+    <!-- Beat dots -->
     <div class="beat-row" id="beat-row"></div>
+
+    <!-- Controls -->
     <div class="controls">
       <button class="play-btn" id="play-btn" onclick="togglePlay()">▶ Start</button>
       <button class="tap-btn" onclick="tap()">Tap Tempo</button>
     </div>
+
+    <!-- Time signature -->
     <div class="sig-row" id="sig-row">
       <span style="font-size:12px;color:var(--color-text-secondary);margin-right:4px;line-height:28px">Time Signature:</span>
     </div>
+
+    <!-- Subdivision -->
     <div class="subdivide-row" id="sub-row">
       <span style="font-size:12px;color:var(--color-text-secondary);line-height:28px">Subdivision:</span>
     </div>
 
-<!-- POLYRHYTHM -->
-<div class="poly-section">
-  <div class="label">Polyrhythm</div>
-  <div class="poly-grid">
-    <div class="poly-voice">
-      <div class="poly-voice-label">Voice A</div>
-      <div class="poly-num">
-        <button class="bpm-btn" onclick="changePoly('a',-1)">−</button>
-        <div class="poly-num-display" id="poly-a-num">3</div>
-        <button class="bpm-btn" onclick="changePoly('a',+1)">+</button>
+    <!-- Polyrhythm -->
+    <div class="poly-section">
+      <div class="label">Polyrhythm</div>
+      <div class="poly-grid">
+        <div class="poly-voice">
+          <div class="poly-voice-label">Voice A</div>
+          <div class="poly-num">
+            <button class="bpm-btn" onclick="changePoly('a',-1)">−</button>
+            <div class="poly-num-display" id="poly-a-num">3</div>
+            <button class="bpm-btn" onclick="changePoly('a',+1)">+</button>
+          </div>
+          <div class="poly-dots" id="poly-a-dots"></div>
+        </div>
+        <div class="poly-vs">vs</div>
+        <div class="poly-voice">
+          <div class="poly-voice-label">Voice B</div>
+          <div class="poly-num">
+            <button class="bpm-btn" onclick="changePoly('b',-1)">−</button>
+            <div class="poly-num-display" id="poly-b-num">4</div>
+            <button class="bpm-btn" onclick="changePoly('b',+1)">+</button>
+          </div>
+          <div class="poly-dots" id="poly-b-dots"></div>
+        </div>
       </div>
-      <div class="poly-dots" id="poly-a-dots"></div>
+      <button class="poly-play-btn" id="poly-play-btn" onclick="togglePoly()">▶ Start Polyrhythm</button>
     </div>
-    <div class="poly-vs">vs</div>
-    <div class="poly-voice">
-      <div class="poly-voice-label">Voice B</div>
-      <div class="poly-num">
-        <button class="bpm-btn" onclick="changePoly('b',-1)">−</button>
-        <div class="poly-num-display" id="poly-b-num">4</div>
-        <button class="bpm-btn" onclick="changePoly('b',+1)">+</button>
-      </div>
-      <div class="poly-dots" id="poly-b-dots"></div>
-    </div>
+
   </div>
-  <button class="poly-play-btn" id="poly-play-btn" onclick="togglePoly()">▶ Start Polyrhythm</button>
 </div>
 
-
+<!-- ============================================================
+     TUNER PAGE
+     ============================================================ -->
+<div class="page" id="page-tuner">
+  <div class="tuner-wrap">
+    <div class="notation-bar" style="width:100%">
+      <button class="tab active" id="tn-btn-en" onclick="setTunerNotation('en')">English (B/Bb)</button>
+      <button class="tab" id="tn-btn-de" onclick="setTunerNotation('de')">German (H/B)</button>
+    </div>
+    <div class="tuner-display">
+      <div class="tuner-note" id="tuner-note">–</div>
+      <div class="tuner-info" id="tuner-info"></div>
+      <div class="tuner-meter" id="tuner-meter">
+        <div class="tuner-meter-line"></div>
+        <div class="tuner-needle" id="tuner-needle"></div>
+      </div>
+      <div class="tuner-cents" id="tuner-cents"></div>
+    </div>
+    <button class="tuner-btn" id="tuner-btn" onclick="toggleTuner()">Enable Microphone</button>
+    <div class="tuner-status" id="tuner-status"></div>
+    <div class="label" style="align-self:flex-start">Select Tuning</div>
+    <div class="tuning-list" id="tuning-list"></div>
   </div>
 </div>
 
-<!-- SCALES PAGE -->
-
+<!-- ============================================================
+     SCALES PAGE
+     ============================================================ -->
 <div class="page" id="page-scales">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en" onclick="setCSNotation('en')">English (B/Bb)</button>
@@ -214,8 +264,9 @@ svg.fb { display: block; }
   </div>
 </div>
 
-<!-- CHORDS PAGE -->
-
+<!-- ============================================================
+     CHORDS PAGE
+     ============================================================ -->
 <div class="page" id="page-chords">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en-chords" onclick="setCSNotation('en')">English (B/Bb)</button>
@@ -245,32 +296,9 @@ svg.fb { display: block; }
   </div>
 </div>
 
-<!-- TUNER PAGE -->
-
-<div class="page" id="page-tuner">
-  <div class="tuner-wrap">
-    <div class="notation-bar" style="width:100%">
-      <button class="tab active" id="tn-btn-en" onclick="setTunerNotation('en')">English (B/Bb)</button>
-      <button class="tab" id="tn-btn-de" onclick="setTunerNotation('de')">German (H/B)</button>
-    </div>
-    <div class="tuner-display">
-      <div class="tuner-note" id="tuner-note">–</div>
-      <div class="tuner-info" id="tuner-info"></div>
-      <div class="tuner-meter" id="tuner-meter">
-        <div class="tuner-meter-line"></div>
-        <div class="tuner-needle" id="tuner-needle"></div>
-      </div>
-      <div class="tuner-cents" id="tuner-cents"></div>
-    </div>
-    <button class="tuner-btn" id="tuner-btn" onclick="toggleTuner()">Enable Microphone</button>
-    <div class="tuner-status" id="tuner-status"></div>
-    <div class="label" style="align-self:flex-start">Select Tuning</div>
-    <div class="tuning-list" id="tuning-list"></div>
-  </div>
-</div>
-
-<!-- CIRCLE OF FIFTHS PAGE -->
-
+<!-- ============================================================
+     CIRCLE OF FIFTHS PAGE
+     ============================================================ -->
 <div class="page" id="page-qz">
   <div class="qz-wrap">
     <div style="display:flex;gap:8px;align-self:flex-end;margin-bottom:-8px">
@@ -434,14 +462,12 @@ function changePoly(voice, delta) {
   buildPolyDots();
   if(polyPlaying) { stopPoly(); startPoly(); }
 }
-
 function buildPolyDots() {
   document.getElementById('poly-a-dots').innerHTML=
     Array.from({length:polyA},(_,i)=>`<div class="poly-dot" id="pad-${i}"></div>`).join('');
   document.getElementById('poly-b-dots').innerHTML=
     Array.from({length:polyB},(_,i)=>`<div class="poly-dot" id="pbd-${i}"></div>`).join('');
 }
-
 function schedulePolyClick(time, freq, vol) {
   initAudio();
   const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
@@ -451,29 +477,24 @@ function schedulePolyClick(time, freq, vol) {
   gain.gain.exponentialRampToValueAtTime(0.001, time+0.08);
   osc.start(time); osc.stop(time+0.09);
 }
-
 function polyScheduler() {
   if(!audioCtx) return;
-  const barDur = (60/bpm) * 4; // one bar in seconds
-  const durA = barDur / polyA;
-  const durB = barDur / polyB;
-  const ahead = audioCtx.currentTime + scheduleAhead;
-
-  while(polyNextTimeA < ahead) {
+  const durA = 60 / bpm;
+  const durB = (60 / bpm) * (polyA / polyB);
+  const ahead=audioCtx.currentTime+scheduleAhead;
+  while(polyNextTimeA<ahead) {
     schedulePolyClick(polyNextTimeA, 880, 0.5);
     polyScheduled.push({time:polyNextTimeA, voice:'a', beat:polyBeatA%polyA});
     polyBeatA++; polyNextTimeA+=durA;
   }
-  while(polyNextTimeB < ahead) {
+  while(polyNextTimeB<ahead) {
     schedulePolyClick(polyNextTimeB, 440, 0.4);
     polyScheduled.push({time:polyNextTimeB, voice:'b', beat:polyBeatB%polyB});
     polyBeatB++; polyNextTimeB+=durB;
   }
-
   polyTimerID=setTimeout(polyScheduler, lookahead);
   updatePolyDots();
 }
-
 function updatePolyDots() {
   if(!audioCtx) return;
   const now=audioCtx.currentTime;
@@ -488,7 +509,6 @@ function updatePolyDots() {
   polyScheduled=polyScheduled.filter(b=>b.time>now-0.1);
   if(polyPlaying) requestAnimationFrame(updatePolyDots);
 }
-
 function startPoly() {
   initAudio();
   if(audioCtx.state==='suspended') audioCtx.resume();
@@ -501,7 +521,6 @@ function startPoly() {
   const btn=document.getElementById('poly-play-btn');
   btn.textContent='■ Stop Polyrhythm'; btn.classList.add('playing');
 }
-
 function stopPoly() {
   polyPlaying=false;
   clearTimeout(polyTimerID);
@@ -510,30 +529,29 @@ function stopPoly() {
   const btn=document.getElementById('poly-play-btn');
   btn.textContent='▶ Start Polyrhythm'; btn.classList.remove('playing');
 }
-
 function togglePoly() {
   if(polyPlaying) stopPoly(); else startPoly();
 }
-
 buildPolyDots();
 
 // ============================================================
 // TUNINGS
 // ============================================================
 const TUNINGS=[
-  {name:'Standard',    notes:'E A D G B e',      open:[4,9,2,7,11,4],  freqs:[82.41,110.00,146.83,196.00,246.94,329.63]},
+  {name:'Standard',    notes:'E A D G B e',       open:[4,9,2,7,11,4],  freqs:[82.41,110.00,146.83,196.00,246.94,329.63]},
   {name:'Drop D',      notes:'D A D G B e',       open:[2,9,2,7,11,4],  freqs:[73.42,110.00,146.83,196.00,246.94,329.63]},
   {name:'Open E',      notes:'E B E G# B e',      open:[4,11,4,8,11,4], freqs:[82.41,123.47,164.81,207.65,246.94,329.63]},
   {name:'Open G',      notes:'D G D G B D',       open:[2,7,2,7,11,2],  freqs:[73.42,98.00,146.83,196.00,246.94,293.66]},
   {name:'Open D',      notes:'D A D F# A D',      open:[2,9,2,6,9,2],   freqs:[73.42,110.00,146.83,185.00,220.00,293.66]},
   {name:'DADGAD',      notes:'D A D G A D',       open:[2,9,2,7,9,2],   freqs:[73.42,110.00,146.83,196.00,220.00,293.66]},
   {name:'Drop C',      notes:'C G C F A D',       open:[0,7,0,5,9,2],   freqs:[65.41,98.00,130.81,174.61,220.00,293.66]},
+  {name:'Drop B',      notes:'B F# B E G# C#',    open:[11,6,11,4,8,1], freqs:[61.74,92.50,123.47,164.81,207.65,277.18]},
   {name:'Half step ↓', notes:'Eb Ab Db Gb Bb eb', open:[3,8,1,6,10,3],  freqs:[77.78,103.83,138.59,184.99,233.08,311.13]},
   {name:'Full step ↓', notes:'D G C F A D',       open:[2,7,0,5,9,2],   freqs:[73.42,98.00,130.81,174.61,220.00,293.66]},
 ];
 
 // ============================================================
-// CHEATSHEET – SCALES
+// SCALES
 // ============================================================
 const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const SCALES={
@@ -551,12 +569,10 @@ function renderKeyTabs() {
     `<div class="tab${k===currentKey?' active':''}" onclick="setKey('${k}')">${n(k,csNotation)}</div>`).join('');
 }
 function getScaleSemitones(k,s) { return SCALES[s].intervals.map(i=>(KEYS[k]+i)%12); }
-
 function drawFretboard() {
-  const tuning = TUNINGS.find(t=>t.name===currentScaleTuning) || TUNINGS[0];
-  const OPEN = [...tuning.open].reverse();
-  const STRINGS = tuning.notes.split(' ').reverse();
-
+  const tuning=TUNINGS.find(t=>t.name===currentScaleTuning)||TUNINGS[0];
+  const OPEN=[...tuning.open].reverse();
+  const STRINGS=tuning.notes.split(' ').reverse();
   const svg=document.getElementById('fb-svg');
   const scaleTones=getScaleSemitones(currentKey,currentScale), root=KEYS[currentKey];
   const frets=12,W=620,H=160,padL=24,padT=24,padB=20;
@@ -584,25 +600,23 @@ function setScale(s) {
   document.querySelectorAll('#scale-tabs .tab').forEach(t=>t.classList.toggle('active',t.onclick.toString().includes("'"+s+"'")));
   drawFretboard();
 }
-
-const scaleTuningRow = document.getElementById('scale-tuning-tabs');
-TUNINGS.forEach(t => {
-  const b = document.createElement('div');
-  b.className = 'tab' + (t.name === 'Standard' ? ' active' : '');
-  b.textContent = t.name;
-  b.onclick = () => {
-    currentScaleTuning = t.name;
-    document.querySelectorAll('#scale-tuning-tabs .tab').forEach(x => x.classList.remove('active'));
+const scaleTuningRow=document.getElementById('scale-tuning-tabs');
+TUNINGS.forEach(t=>{
+  const b=document.createElement('div');
+  b.className='tab'+(t.name==='Standard'?' active':'');
+  b.textContent=t.name;
+  b.onclick=()=>{
+    currentScaleTuning=t.name;
+    document.querySelectorAll('#scale-tuning-tabs .tab').forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
     drawFretboard();
   };
   scaleTuningRow.appendChild(b);
 });
-
 renderKeyTabs(); drawFretboard();
 
 // ============================================================
-// CHEATSHEET – CHORDS
+// CHORDS
 // ============================================================
 const CHORD_DATA={
   all:[
@@ -610,92 +624,92 @@ const CHORD_DATA={
     {name:'Cm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[]},
     {name:'C7',   fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],    mute:[6],   open:[1]},
     {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                    mute:[6],   open:[1,2,3]},
-    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[]},
-    {name:'D',    fingers:[[2,1,3],[3,3,2],[2,2,1]],             mute:[5,6], open:[4]},
-    {name:'Dm',   fingers:[[2,2,3],[3,3,2],[1,1,1]],             mute:[5,6], open:[4]},
-    {name:'D7',   fingers:[[2,3,3],[1,1,2],[2,2,1]],             mute:[5,6], open:[4]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                         mute:[5,6], open:[4]},
-    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],                 mute:[5,6], open:[4]},
-    {name:'E',    fingers:[[2,2,5],[2,3,4],[1,1,3]],             mute:[],    open:[1,2,6]},
-    {name:'Em',   fingers:[[2,2,5],[2,3,4]],                     mute:[],    open:[1,2,3,6]},
-    {name:'E7',   fingers:[[2,2,5],[1,1,3]],                     mute:[],    open:[1,2,4,6]},
-    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],             mute:[1],   open:[2,6]},
-    {name:'Em7',  fingers:[[2,2,5],[2,3,4],[3,4,2]],             mute:[],    open:[1,3,6]},
-    {name:'F',    fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]], mute:[],    open:[]},
-    {name:'Fm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[]},
-    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],         mute:[],    open:[]},
-    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],             mute:[5,6], open:[1]},
-    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[]},
-    {name:'G',    fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],     mute:[],    open:[3,4]},
-    {name:'Gm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[],  startFret:3},
-    {name:'G7',   fingers:[[3,3,6],[2,2,5],[1,1,1]],             mute:[],    open:[2,3,4]},
-    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],             mute:[],    open:[2,3,4]},
-    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[],  startFret:3},
-    {name:'A',    fingers:[[2,1,4],[2,2,3],[2,3,2]],             mute:[6],   open:[1,5]},
-    {name:'Am',   fingers:[[2,3,4],[2,2,3],[1,1,2]],             mute:[6],   open:[1,5]},
-    {name:'A7',   fingers:[[2,2,4],[2,3,2]],                     mute:[6],   open:[1,3,5]},
-    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],             mute:[6],   open:[1,5]},
-    {name:'Am7',  fingers:[[2,2,4],[1,1,2]],                     mute:[6],   open:[1,3,5]},
-    {name:'B',    fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
-    {name:'Bm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[],  startFret:2},
-    {name:'B7',   fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],     mute:[6],   open:[2]},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
-    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[],  startFret:2},
+    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[]},
+    {name:'D',    fingers:[[2,1,3],[3,3,2],[2,2,1]],            mute:[5,6], open:[4]},
+    {name:'Dm',   fingers:[[2,2,3],[3,3,2],[1,1,1]],            mute:[5,6], open:[4]},
+    {name:'D7',   fingers:[[2,3,3],[1,1,2],[2,2,1]],            mute:[5,6], open:[4]},
+    {name:'Dmaj7',fingers:[[2,1,'1-3']],                        mute:[5,6], open:[4]},
+    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],                mute:[5,6], open:[4]},
+    {name:'E',    fingers:[[2,2,5],[2,3,4],[1,1,3]],            mute:[],    open:[1,2,6]},
+    {name:'Em',   fingers:[[2,2,5],[2,3,4]],                    mute:[],    open:[1,2,3,6]},
+    {name:'E7',   fingers:[[2,2,5],[1,1,3]],                    mute:[],    open:[1,2,4,6]},
+    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],            mute:[1],   open:[2,6]},
+    {name:'Em7',  fingers:[[2,2,5],[2,3,4],[3,4,2]],            mute:[],    open:[1,3,6]},
+    {name:'F',    fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[]},
+    {name:'Fm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[]},
+    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],        mute:[],    open:[]},
+    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],            mute:[5,6], open:[1]},
+    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[]},
+    {name:'G',    fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],    mute:[],    open:[3,4]},
+    {name:'Gm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],  startFret:3},
+    {name:'G7',   fingers:[[3,3,6],[2,2,5],[1,1,1]],            mute:[],    open:[2,3,4]},
+    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],            mute:[],    open:[2,3,4]},
+    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],  startFret:3},
+    {name:'A',    fingers:[[2,1,4],[2,2,3],[2,3,2]],            mute:[6],   open:[1,5]},
+    {name:'Am',   fingers:[[2,3,4],[2,2,3],[1,1,2]],            mute:[6],   open:[1,5]},
+    {name:'A7',   fingers:[[2,2,4],[2,3,2]],                    mute:[6],   open:[1,3,5]},
+    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],            mute:[6],   open:[1,5]},
+    {name:'Am7',  fingers:[[2,2,4],[1,1,2]],                    mute:[6],   open:[1,3,5]},
+    {name:'B',    fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]],mute:[6],   open:[],  startFret:2},
+    {name:'Bm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[],  startFret:2},
+    {name:'B7',   fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],    mute:[6],   open:[2]},
+    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],   open:[],  startFret:2},
+    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2},
   ],
   basic:[
-    {name:'C',   fingers:[[3,3,5],[2,2,4],[1,1,2]],            mute:[6],   open:[1,3]},
-    {name:'Cm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[]},
-    {name:'D',   fingers:[[2,1,3],[3,3,2],[2,2,1]],             mute:[5,6], open:[4]},
-    {name:'Dm',  fingers:[[2,2,3],[3,3,2],[1,1,1]],             mute:[5,6], open:[4]},
-    {name:'E',   fingers:[[2,2,5],[2,3,4],[1,1,3]],             mute:[],    open:[1,2,6]},
-    {name:'Em',  fingers:[[2,2,5],[2,3,4]],                     mute:[],    open:[1,2,3,6]},
-    {name:'F',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[]},
-    {name:'Fm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[]},
-    {name:'G',   fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],     mute:[],    open:[3,4]},
-    {name:'Gm',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[],  startFret:3},
-    {name:'A',   fingers:[[2,1,4],[2,2,3],[2,3,2]],             mute:[6],   open:[1,5]},
-    {name:'Am',  fingers:[[2,3,4],[2,2,3],[1,1,2]],             mute:[6],   open:[1,5]},
-    {name:'B',   fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
-    {name:'Bm',  fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[],  startFret:2},
+    {name:'C',  fingers:[[3,3,5],[2,2,4],[1,1,2]],             mute:[6],   open:[1,3]},
+    {name:'Cm', fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[]},
+    {name:'D',  fingers:[[2,1,3],[3,3,2],[2,2,1]],             mute:[5,6], open:[4]},
+    {name:'Dm', fingers:[[2,2,3],[3,3,2],[1,1,1]],             mute:[5,6], open:[4]},
+    {name:'E',  fingers:[[2,2,5],[2,3,4],[1,1,3]],             mute:[],    open:[1,2,6]},
+    {name:'Em', fingers:[[2,2,5],[2,3,4]],                     mute:[],    open:[1,2,3,6]},
+    {name:'F',  fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]], mute:[],    open:[]},
+    {name:'Fm', fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[]},
+    {name:'G',  fingers:[[3,2,6],[2,1,5],[3,3,2],[3,4,1]],     mute:[],    open:[3,4]},
+    {name:'Gm', fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[],  startFret:3},
+    {name:'A',  fingers:[[2,1,4],[2,2,3],[2,3,2]],             mute:[6],   open:[1,5]},
+    {name:'Am', fingers:[[2,3,4],[2,2,3],[1,1,2]],             mute:[6],   open:[1,5]},
+    {name:'B',  fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
+    {name:'Bm', fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[],  startFret:2},
   ],
   barre:[
     {name:'Cm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[]},
-    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                         mute:[5,6], open:[4]},
-    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],                 mute:[5,6], open:[4]},
-    {name:'F',    fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]], mute:[],    open:[]},
-    {name:'Fm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[]},
-    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],         mute:[],    open:[]},
-    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[]},
-    {name:'Gm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],         mute:[],    open:[],  startFret:3},
-    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[],  startFret:3},
-    {name:'B',    fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
-    {name:'Bm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]], mute:[6],   open:[],  startFret:2},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
-    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[],  startFret:2},
+    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[]},
+    {name:'Dmaj7',fingers:[[2,1,'1-3']],                        mute:[5,6], open:[4]},
+    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],                mute:[5,6], open:[4]},
+    {name:'F',    fingers:[[1,1,'1-6'],[3,3,5],[3,4,4],[2,2,3]],mute:[],    open:[]},
+    {name:'Fm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[]},
+    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],        mute:[],    open:[]},
+    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[]},
+    {name:'Gm',   fingers:[[1,1,'1-6'],[3,3,5],[3,4,4]],        mute:[],    open:[],  startFret:3},
+    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],                mute:[],    open:[],  startFret:3},
+    {name:'B',    fingers:[[1,1,'1-5'],[3,2,4],[3,3,3],[3,4,2]],mute:[6],   open:[],  startFret:2},
+    {name:'Bm',   fingers:[[1,1,'1-5'],[3,3,4],[3,4,3],[2,2,2]],mute:[6],   open:[],  startFret:2},
+    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],   open:[],  startFret:2},
+    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2},
   ],
   '7th':[
-    {name:'C7',   fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],    mute:[6],   open:[1]},
-    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                    mute:[6],   open:[1,2,3]},
-    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[]},
-    {name:'D7',   fingers:[[2,3,3],[1,1,2],[2,2,1]],             mute:[5,6], open:[4]},
-    {name:'Dmaj7',fingers:[[2,1,'1-3']],                         mute:[5,6], open:[4]},
-    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],                 mute:[5,6], open:[4]},
-    {name:'E7',   fingers:[[2,2,5],[1,1,3]],                     mute:[],    open:[1,2,4,6]},
-    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],             mute:[1],   open:[2,6]},
-    {name:'Em7',  fingers:[[2,2,5],[2,3,4],[3,4,2]],             mute:[],    open:[1,3,6]},
-    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],         mute:[],    open:[]},
-    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],             mute:[5,6], open:[1]},
-    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[]},
-    {name:'G7',   fingers:[[3,3,6],[2,2,5],[1,1,1]],             mute:[],    open:[2,3,4]},
-    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],             mute:[],    open:[2,3,4]},
-    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],                 mute:[],    open:[],  startFret:3},
-    {name:'A7',   fingers:[[2,2,4],[2,3,2]],                     mute:[6],   open:[1,3,5]},
-    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],             mute:[6],   open:[1,5]},
-    {name:'Am7',  fingers:[[2,2,4],[1,1,2]],                     mute:[6],   open:[1,3,5]},
-    {name:'B7',   fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],     mute:[6],   open:[2]},
-    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]], mute:[6],   open:[],  startFret:2},
-    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],         mute:[6],   open:[],  startFret:2},
+    {name:'C7',   fingers:[[3,3,5],[2,2,4],[3,4,3],[1,1,2]],   mute:[6],   open:[1]},
+    {name:'Cmaj7',fingers:[[3,3,5],[2,2,4]],                   mute:[6],   open:[1,2,3]},
+    {name:'Cm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],       mute:[6],   open:[]},
+    {name:'D7',   fingers:[[2,3,3],[1,1,2],[2,2,1]],           mute:[5,6], open:[4]},
+    {name:'Dmaj7',fingers:[[2,1,'1-3']],                       mute:[5,6], open:[4]},
+    {name:'Dm7',  fingers:[[1,1,'1-2'],[2,2,3]],               mute:[5,6], open:[4]},
+    {name:'E7',   fingers:[[2,2,5],[1,1,3]],                   mute:[],    open:[1,2,4,6]},
+    {name:'Emaj7',fingers:[[2,3,5],[1,1,4],[1,2,3]],           mute:[1],   open:[2,6]},
+    {name:'Em7',  fingers:[[2,2,5],[2,3,4],[3,4,2]],           mute:[],    open:[1,3,6]},
+    {name:'F7',   fingers:[[1,1,'1-6'],[3,3,5],[2,2,3]],       mute:[],    open:[]},
+    {name:'Fmaj7',fingers:[[3,3,4],[2,2,3],[1,1,2]],           mute:[5,6], open:[1]},
+    {name:'Fm7',  fingers:[[1,1,'1-6'],[3,3,5]],               mute:[],    open:[]},
+    {name:'G7',   fingers:[[3,3,6],[2,2,5],[1,1,1]],           mute:[],    open:[2,3,4]},
+    {name:'Gmaj7',fingers:[[3,3,6],[2,2,5],[2,1,1]],           mute:[],    open:[2,3,4]},
+    {name:'Gm7',  fingers:[[1,1,'1-6'],[3,3,5]],               mute:[],    open:[],  startFret:3},
+    {name:'A7',   fingers:[[2,2,4],[2,3,2]],                   mute:[6],   open:[1,3,5]},
+    {name:'Amaj7',fingers:[[2,2,4],[1,1,3],[2,3,2]],           mute:[6],   open:[1,5]},
+    {name:'Am7',  fingers:[[2,2,4],[1,1,2]],                   mute:[6],   open:[1,3,5]},
+    {name:'B7',   fingers:[[2,2,5],[1,1,4],[2,3,3],[2,4,1]],   mute:[6],   open:[2]},
+    {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],  open:[],  startFret:2},
+    {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],       mute:[6],   open:[],  startFret:2},
   ],
 };
 let currentChordCat='all';
@@ -744,9 +758,9 @@ const QZ_KEYS_MIN=['Am','Em','Bm','F#m','C#m','G#m','D#m/Ebm','Bbm','Fm','Cm','G
 const QZ_DE={'B':'H','Bb':'B','Bm':'Hm','Bbm':'Bm','B7':'H7','Bmaj7':'Hmaj7','Bm7':'Hm7'};
 function qn(name) { return qzNotation==='de'?(QZ_DE[name]||name):name; }
 const QZ_DATA={
-  'C':{chords:['C','Dm','Em','F','G','Am','Bdim'],  rel:'Am'},
-  'G':{chords:['G','Am','Bm','C','D','Em','F#dim'], rel:'Em'},
-  'D':{chords:['D','Em','F#m','G','A','Bm','C#dim'],rel:'Bm'},
+  'C':{chords:['C','Dm','Em','F','G','Am','Bdim'],   rel:'Am'},
+  'G':{chords:['G','Am','Bm','C','D','Em','F#dim'],  rel:'Em'},
+  'D':{chords:['D','Em','F#m','G','A','Bm','C#dim'], rel:'Bm'},
   'A':{chords:['A','Bm','C#m','D','E','F#m','G#dim'],rel:'F#m'},
   'E':{chords:['E','F#m','G#m','A','B','C#m','D#dim'],rel:'C#m'},
   'B':{chords:['B','C#m','D#m','E','F#','G#m','A#dim'],rel:'G#m'},
@@ -754,8 +768,8 @@ const QZ_DATA={
   'Db':{chords:['Db','Ebm','Fm','Gb','Ab','Bbm','Cdim'],rel:'Bbm'},
   'Ab':{chords:['Ab','Bbm','Cm','Db','Eb','Fm','Gdim'],rel:'Fm'},
   'Eb':{chords:['Eb','Fm','Gm','Ab','Bb','Cm','Ddim'],rel:'Cm'},
-  'Bb':{chords:['Bb','Cm','Dm','Eb','F','Gm','Adim'],rel:'Gm'},
-  'F':{chords:['F','Gm','Am','Bb','C','Dm','Edim'],rel:'Dm'},
+  'Bb':{chords:['Bb','Cm','Dm','Eb','F','Gm','Adim'], rel:'Gm'},
+  'F':{chords:['F','Gm','Am','Bb','C','Dm','Edim'],   rel:'Dm'},
 };
 const QZ_CX=250,QZ_CY=250,R_OUT=200,R_MID=148,R_IN=96,R_CENTER=44,TEXT_OUT=175,TEXT_IN=122;
 let qzSelected=null;
@@ -809,27 +823,26 @@ drawQZ(null);
 // TUNER
 // ============================================================
 const CHROMATIC=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-
-let activeTuning = null;
+let activeTuning=null;
 let tunerActive=false, tunerStream=null, tunerAudioCtx=null, tunerAnalyser=null, tunerRAF=null, tunerBuf=null;
 
 function renderTuningList() {
-  const rows = TUNINGS.map(t => {
-    const isActive = activeTuning === t;
+  const rows=TUNINGS.map(t=>{
+    const isActive=activeTuning===t;
     return `<div class="tuning-row${isActive?' active':''}" onclick="selectTuning('${t.name}')">
       <div class="tuning-row-name">${t.name}</div>
-      <div class="tuning-row-notes">${noteArr(t.notes, tnNotation)}</div>
+      <div class="tuning-row-notes">${noteArr(t.notes,tnNotation)}</div>
     </div>`;
   });
-  const freeActive = activeTuning === null;
-  const freeRow = `<div class="tuning-row${freeActive?' active':''}" onclick="selectTuning(null)">
+  const freeActive=activeTuning===null;
+  const freeRow=`<div class="tuning-row${freeActive?' active':''}" onclick="selectTuning(null)">
     <div class="tuning-row-name">Free</div>
     <div class="tuning-row-notes">Nearest semitone</div>
   </div>`;
-  document.getElementById('tuning-list').innerHTML = freeRow + rows.join('');
+  document.getElementById('tuning-list').innerHTML=freeRow+rows.join('');
 }
 function selectTuning(name) {
-  activeTuning = name === null ? null : TUNINGS.find(t=>t.name===name);
+  activeTuning=name===null?null:TUNINGS.find(t=>t.name===name);
   renderTuningList();
 }
 renderTuningList();
@@ -837,7 +850,7 @@ renderTuningList();
 function detectPitch(buf, sampleRate) {
   let rms=0;
   for(let i=0;i<buf.length;i++) rms+=buf[i]*buf[i];
-  if(Math.sqrt(rms/buf.length) < 0.01) return null;
+  if(Math.sqrt(rms/buf.length)<0.01) return null;
   let start=0, end=buf.length-1;
   for(let i=0;i<buf.length/2;i++) if(Math.abs(buf[i])<0.2){start=i;break;}
   for(let i=1;i<buf.length/2;i++) if(Math.abs(buf[buf.length-i])<0.2){end=buf.length-i;break;}
@@ -851,18 +864,18 @@ function detectPitch(buf, sampleRate) {
   for(let i=peak;i<len;i++) if(corr[i]>maxVal){maxVal=corr[i];maxPos=i;}
   if(maxPos<1) return null;
   const a=corr[maxPos-1], b=corr[maxPos], c=corr[maxPos+1];
-  const refined = maxPos + (c-a)/(2*(2*b-a-c));
-  const freq = sampleRate/refined;
-  return (freq>50&&freq<1400) ? freq : null;
+  const refined=maxPos+(c-a)/(2*(2*b-a-c));
+  const freq=sampleRate/refined;
+  return (freq>50&&freq<1400)?freq:null;
 }
 function freqInfo(freq) {
-  const semitones = 12*Math.log2(freq/440);
-  const rounded = Math.round(semitones);
-  const noteIdx = ((rounded%12)+12+9)%12;
-  const octave = Math.floor((rounded+57)/12);
-  const targetFreq = 440*Math.pow(2,rounded/12);
-  const cents = Math.round(1200*Math.log2(freq/targetFreq));
-  return { noteName: CHROMATIC[noteIdx], octave, cents };
+  const semitones=12*Math.log2(freq/440);
+  const rounded=Math.round(semitones);
+  const noteIdx=((rounded%12)+12+9)%12;
+  const octave=Math.floor((rounded+57)/12);
+  const targetFreq=440*Math.pow(2,rounded/12);
+  const cents=Math.round(1200*Math.log2(freq/targetFreq));
+  return {noteName:CHROMATIC[noteIdx],octave,cents};
 }
 function nearestString(freq, tuning) {
   let bestIdx=0, bestCents=Infinity;
@@ -872,8 +885,8 @@ function nearestString(freq, tuning) {
   });
   const targetFreq=tuning.freqs[bestIdx];
   const cents=Math.round(1200*Math.log2(freq/targetFreq));
-  const stringNames=noteArr(tuning.notes, tnNotation).split(' ');
-  return { stringName: stringNames[bestIdx], cents };
+  const stringNames=noteArr(tuning.notes,tnNotation).split(' ');
+  return {stringName:stringNames[bestIdx],cents};
 }
 async function toggleTuner() {
   if(tunerActive){stopTuner();return;}
@@ -915,24 +928,24 @@ function tunerSetDisplay(data) {
     needleEl.style.left='50%'; meterEl.classList.remove('in-tune');
     return;
   }
-  const {noteName, octave, cents, info} = data;
-  noteEl.textContent = n(noteName, tnNotation) + octave;
-  infoEl.textContent = info;
-  centsEl.textContent = cents===0 ? '♦ in tune' : cents>0 ? `+${cents} cents (too high)` : `${cents} cents (too low)`;
-  needleEl.style.left = Math.max(5,Math.min(95, 50+(cents/50)*45))+'%';
-  meterEl.classList.toggle('in-tune', Math.abs(cents)<5);
+  const {noteName,octave,cents,info}=data;
+  noteEl.textContent=n(noteName,tnNotation)+octave;
+  infoEl.textContent=info;
+  centsEl.textContent=cents===0?'♦ in tune':cents>0?`+${cents} cents (too high)`:`${cents} cents (too low)`;
+  needleEl.style.left=Math.max(5,Math.min(95,50+(cents/50)*45))+'%';
+  meterEl.classList.toggle('in-tune',Math.abs(cents)<5);
 }
 function tunerLoop() {
   if(!tunerActive) return;
   tunerAnalyser.getFloatTimeDomainData(tunerBuf);
-  const freq=detectPitch(tunerBuf, tunerAudioCtx.sampleRate);
+  const freq=detectPitch(tunerBuf,tunerAudioCtx.sampleRate);
   if(freq) {
-    const {noteName, octave, cents: freeCents} = freqInfo(freq);
+    const {noteName,octave,cents:freeCents}=freqInfo(freq);
     if(activeTuning===null) {
-      tunerSetDisplay({ noteName, octave, cents: freeCents, info: freq.toFixed(1)+' Hz' });
+      tunerSetDisplay({noteName,octave,cents:freeCents,info:freq.toFixed(1)+' Hz'});
     } else {
-      const {stringName, cents: tuningCents} = nearestString(freq, activeTuning);
-      tunerSetDisplay({ noteName, octave, cents: tuningCents, info: freq.toFixed(1)+' Hz  ·  String: '+stringName });
+      const {stringName,cents:tuningCents}=nearestString(freq,activeTuning);
+      tunerSetDisplay({noteName,octave,cents:tuningCents,info:freq.toFixed(1)+' Hz  ·  String: '+stringName});
     }
   } else {
     tunerSetDisplay(null);
@@ -947,13 +960,13 @@ const CAPO_NOTES=['E','F','F#','G','G#','A','A#','B','C','C#','D','D#'];
     const o=document.createElement('option');
     o.value=i; o.textContent=n; sel.appendChild(o);
   });
-  sel.addEventListener('change', updateCapo);
+  sel.addEventListener('change',updateCapo);
 });
 function updateCapo() {
   const grip=+document.getElementById('capo-grip').value;
   const target=+document.getElementById('capo-target').value;
   const fret=(target-grip+12)%12;
-  document.getElementById('capo-result').textContent = fret===0 ? 'No capo' : `Capo fret ${fret}`;
+  document.getElementById('capo-result').textContent=fret===0?'No capo':`Capo fret ${fret}`;
 }
 updateCapo();
 </script>
