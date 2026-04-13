@@ -24,10 +24,7 @@ Microphone access (for the tuner) is remembered by the browser after the first p
 
 ## Known Issues
 
-- **Tap Tempo double-tap zoom on iOS Safari**: The browser version triggers 
-  iOS Safari's double-tap zoom when tapping quickly. This is a Safari bug 
-  (`touch-action: manipulation` is ignored in browser context). 
-  **Workaround: use the PWA** (Add to Home Screen) – the bug does not occur there.
+- **Visual Bug**: On the frames tab are some minor visual bugs.
 
 ## Credits
 
