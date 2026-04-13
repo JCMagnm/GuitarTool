@@ -74,7 +74,6 @@ svg.fb { display: block; }
 .qz-key { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
 .qz-chords { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.7; }
 .qz-hint { font-size: 11px; color: var(--color-text-secondary); opacity: 0.5; }
-/* TUNER */
 .tuner-wrap { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .tuner-display { width: 100%; background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 24px 16px 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .tuner-note { font-size: 72px; font-weight: 500; line-height: 1; color: var(--color-text-primary); }
@@ -150,6 +149,8 @@ svg.fb { display: block; }
       <div class="tab" onclick="setScale('natural_minor')">Natural Minor</div>
       <div class="tab" onclick="setScale('major')">Major</div>
     </div>
+    <div class="label">Tuning</div>
+    <div class="tabs" id="scale-tuning-tabs"></div>
     <div class="fretboard">
       <svg class="fb" id="fb-svg" width="100%" viewBox="0 0 640 180"></svg>
     </div>
@@ -257,7 +258,7 @@ function showPage(id) {
   document.getElementById('page-'+id).classList.add('active');
   document.getElementById('sw-'+id).classList.add('active');
   if(id==='qz') drawQZ(qzSelected);
-  if(id === 'chords') renderChords();
+  if(id==='chords') renderChords();
   if(id!=='tuner' && tunerActive) stopTuner();
 }
 
@@ -346,26 +347,48 @@ SUBS.forEach(s=>{ const b=document.createElement('button'); b.className='sig-btn
 buildDots();
 
 // ============================================================
+// TUNINGS
+// open = semitone values per string, low E (string 6) first
+// C=0 C#=1 D=2 D#=3 E=4 F=5 F#=6 G=7 G#=8 A=9 A#=10 B=11
+// ============================================================
+const TUNINGS=[
+  {name:'Standard',    notes:'E A D G B e',      open:[4,9,2,7,11,4],  freqs:[82.41,110.00,146.83,196.00,246.94,329.63]},
+  {name:'Drop D',      notes:'D A D G B e',       open:[2,9,2,7,11,4],  freqs:[73.42,110.00,146.83,196.00,246.94,329.63]},
+  {name:'Open E',      notes:'E B E G# B e',      open:[4,11,4,8,11,4], freqs:[82.41,123.47,164.81,207.65,246.94,329.63]},
+  {name:'Open G',      notes:'D G D G B D',       open:[2,7,2,7,11,2],  freqs:[73.42,98.00,146.83,196.00,246.94,293.66]},
+  {name:'Open D',      notes:'D A D F# A D',      open:[2,9,2,6,9,2],   freqs:[73.42,110.00,146.83,185.00,220.00,293.66]},
+  {name:'DADGAD',      notes:'D A D G A D',       open:[2,9,2,7,9,2],   freqs:[73.42,110.00,146.83,196.00,220.00,293.66]},
+  {name:'Drop C',      notes:'C G C F A D',       open:[0,7,0,5,9,2],   freqs:[65.41,98.00,130.81,174.61,220.00,293.66]},
+  {name:'Half step ↓', notes:'Eb Ab Db Gb Bb eb', open:[3,8,1,6,10,3],  freqs:[77.78,103.83,138.59,184.99,233.08,311.13]},
+  {name:'Full step ↓', notes:'D G C F A D',       open:[2,7,0,5,9,2],   freqs:[73.42,98.00,130.81,174.61,220.00,293.66]},
+];
+
+// ============================================================
 // CHEATSHEET – SCALES
 // ============================================================
-const STRINGS_EN=['e','B','G','D','A','E'], OPEN=[4,11,7,2,9,4];
 const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const SCALES={
-  pentatonic_minor:{intervals:[0,3,5,7,10],   name:'Minor Pentatonic', desc:'The foundation of blues and rock. 5 notes, works over almost anything.'},
-  pentatonic_major:{intervals:[0,2,4,7,9],    name:'Major Pentatonic', desc:'Brighter sound than minor pentatonic. Same shapes, just shifted 3 frets up.'},
-  blues:           {intervals:[0,3,5,6,7,10], name:'Blues Scale',      desc:'Minor pentatonic + flat 5 "blue note". Adds tension and expression.'},
-  natural_minor:   {intervals:[0,2,3,5,7,8,10],name:'Natural Minor',  desc:'7 notes, melancholic character. Common in rock, metal and classical.'},
-  major:           {intervals:[0,2,4,5,7,9,11],name:'Major',          desc:'7 notes, bright and resolved. The most fundamental scale in Western music.'},
+  pentatonic_minor:{intervals:[0,3,5,7,10],    name:'Minor Pentatonic', desc:'The foundation of blues and rock. 5 notes, works over almost anything.'},
+  pentatonic_major:{intervals:[0,2,4,7,9],     name:'Major Pentatonic', desc:'Brighter sound than minor pentatonic. Same shapes, just shifted 3 frets up.'},
+  blues:           {intervals:[0,3,5,6,7,10],  name:'Blues Scale',      desc:'Minor pentatonic + flat 5 "blue note". Adds tension and expression.'},
+  natural_minor:   {intervals:[0,2,3,5,7,8,10],name:'Natural Minor',    desc:'7 notes, melancholic character. Common in rock, metal and classical.'},
+  major:           {intervals:[0,2,4,5,7,9,11],name:'Major',            desc:'7 notes, bright and resolved. The most fundamental scale in Western music.'},
 };
 const KEY_NAMES=['A','E','D','G','C','B'], KEYS={A:9,E:4,D:2,G:7,C:0,B:11};
-let currentKey='A', currentScale='pentatonic_minor';
+let currentKey='A', currentScale='pentatonic_minor', currentScaleTuning='Standard';
 
 function renderKeyTabs() {
   document.getElementById('key-tabs').innerHTML=KEY_NAMES.map(k=>
     `<div class="tab${k===currentKey?' active':''}" onclick="setKey('${k}')">${n(k,csNotation)}</div>`).join('');
 }
 function getScaleSemitones(k,s) { return SCALES[s].intervals.map(i=>(KEYS[k]+i)%12); }
+
 function drawFretboard() {
+  const tuning = TUNINGS.find(t=>t.name===currentScaleTuning) || TUNINGS[0];
+  // open[] is low-E first; fretboard draws high-e (index 0) at top, so reverse for display
+  const OPEN = [...tuning.open].reverse();
+  const STRINGS = tuning.notes.split(' ').reverse(); // high-e first for display
+
   const svg=document.getElementById('fb-svg');
   const scaleTones=getScaleSemitones(currentKey,currentScale), root=KEYS[currentKey];
   const frets=12,W=620,H=160,padL=24,padT=24,padB=20;
@@ -374,7 +397,7 @@ function drawFretboard() {
   for(let f=0;f<=frets;f++){const x=padL+f*fretW;html+=`<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="rgba(255,255,255,0.3)" stroke-width="${f===0?2.5:0.5}"/>`;}
   for(let s=0;s<6;s++){const y=padT+s*strH;html+=`<line x1="${padL}" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>`;}
   [3,5,7,9,12].forEach(f=>{if(f>frets)return;const x=padL+(f-0.5)*fretW;html+=`<circle cx="${x}" cy="${H-10}" r="3" fill="rgba(255,255,255,0.3)"/>`;});
-  STRINGS_EN.forEach((s,i)=>{const y=padT+i*strH;html+=`<text x="10" y="${y+1}" text-anchor="middle" dominant-baseline="central" style="font-size:10px;fill:#9c9a92">${n(s,csNotation)}</text>`;});
+  STRINGS.forEach((s,i)=>{const y=padT+i*strH;html+=`<text x="10" y="${y+1}" text-anchor="middle" dominant-baseline="central" style="font-size:10px;fill:#9c9a92">${n(s,csNotation)}</text>`;});
   for(let s=0;s<6;s++) for(let f=0;f<=frets;f++){
     const semi=(OPEN[s]+f)%12; if(!scaleTones.includes(semi)) continue;
     const x=f===0?padL-12:padL+(f-0.5)*fretW, y=padT+s*strH, isRoot=semi===root;
@@ -393,6 +416,23 @@ function setScale(s) {
   document.querySelectorAll('#scale-tabs .tab').forEach(t=>t.classList.toggle('active',t.onclick.toString().includes("'"+s+"'")));
   drawFretboard();
 }
+
+// Build scale tuning tabs
+const scaleTuningRow = document.getElementById('scale-tuning-tabs');
+TUNINGS.forEach(t => {
+  const b = document.createElement('div');
+  b.className = 'tab' + (t.name === 'Standard' ? ' active' : '');
+  b.textContent = t.name;
+  b.onclick = () => {
+    currentScaleTuning = t.name;
+    document.querySelectorAll('#scale-tuning-tabs .tab').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    drawFretboard();
+  };
+  scaleTuningRow.appendChild(b);
+});
+
+renderKeyTabs(); drawFretboard();
 
 // ============================================================
 // CHEATSHEET – CHORDS
@@ -527,7 +567,7 @@ function renderChords() {
   document.getElementById('chord-grid').innerHTML=CHORD_DATA[currentChordCat].map(c=>
     `<div class="chord-card"><div class="chord-name">${n(c.name,csNotation)}</div>${drawChord(c)}</div>`).join('');
 }
-renderKeyTabs(); drawFretboard(); renderChords();
+renderChords();
 
 // ============================================================
 // CIRCLE OF FIFTHS
@@ -603,18 +643,6 @@ drawQZ(null);
 // ============================================================
 const CHROMATIC=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 
-const TUNINGS=[
-  {name:'Standard',    notes:'E A D G B e',  freqs:[82.41,110.00,146.83,196.00,246.94,329.63]},
-  {name:'Drop D',      notes:'D A D G B e',  freqs:[73.42,110.00,146.83,196.00,246.94,329.63]},
-  {name:'Open E',      notes:'E B E G# B e', freqs:[82.41,246.94,164.81,207.65,246.94,329.63]},
-  {name:'Open G',      notes:'D G D G B D',  freqs:[73.42,98.00,146.83,196.00,246.94,293.66]},
-  {name:'Open D',      notes:'D A D F# A D', freqs:[73.42,110.00,146.83,185.00,220.00,293.66]},
-  {name:'DADGAD',      notes:'D A D G A D',  freqs:[73.42,110.00,146.83,196.00,220.00,293.66]},
-  {name:'Drop C',      notes:'C G C F A D',  freqs:[65.41,98.00,130.81,174.61,220.00,293.66]},
-  {name:'Half step ↓', notes:'Eb Ab Db Gb Bb eb', freqs:[77.78,103.83,138.59,184.99,233.08,311.13]},
-  {name:'Full step ↓', notes:'D G C F A D',  freqs:[73.42,98.00,130.81,174.61,220.00,293.66]},
-];
-
 let activeTuning = null;
 let tunerActive=false, tunerStream=null, tunerAudioCtx=null, tunerAnalyser=null, tunerRAF=null, tunerBuf=null;
 
@@ -633,7 +661,6 @@ function renderTuningList() {
   </div>`;
   document.getElementById('tuning-list').innerHTML = freeRow + rows.join('');
 }
-
 function selectTuning(name) {
   activeTuning = name === null ? null : TUNINGS.find(t=>t.name===name);
   renderTuningList();
@@ -644,28 +671,23 @@ function detectPitch(buf, sampleRate) {
   let rms=0;
   for(let i=0;i<buf.length;i++) rms+=buf[i]*buf[i];
   if(Math.sqrt(rms/buf.length) < 0.01) return null;
-
   let start=0, end=buf.length-1;
   for(let i=0;i<buf.length/2;i++) if(Math.abs(buf[i])<0.2){start=i;break;}
   for(let i=1;i<buf.length/2;i++) if(Math.abs(buf[buf.length-i])<0.2){end=buf.length-i;break;}
   const slice=buf.slice(start,end);
   const len=slice.length;
-
   const corr=new Float32Array(len);
   for(let i=0;i<len;i++) for(let j=0;j<len-i;j++) corr[i]+=slice[j]*slice[j+i];
-
   let peak=0;
   while(corr[peak]>corr[peak+1]) peak++;
   let maxVal=-1, maxPos=-1;
   for(let i=peak;i<len;i++) if(corr[i]>maxVal){maxVal=corr[i];maxPos=i;}
   if(maxPos<1) return null;
-
   const a=corr[maxPos-1], b=corr[maxPos], c=corr[maxPos+1];
   const refined = maxPos + (c-a)/(2*(2*b-a-c));
   const freq = sampleRate/refined;
   return (freq>50&&freq<1400) ? freq : null;
 }
-
 function freqInfo(freq) {
   const semitones = 12*Math.log2(freq/440);
   const rounded = Math.round(semitones);
@@ -675,7 +697,6 @@ function freqInfo(freq) {
   const cents = Math.round(1200*Math.log2(freq/targetFreq));
   return { noteName: CHROMATIC[noteIdx], octave, cents };
 }
-
 function nearestString(freq, tuning) {
   let bestIdx=0, bestCents=Infinity;
   tuning.freqs.forEach((f,i)=>{
@@ -687,7 +708,6 @@ function nearestString(freq, tuning) {
   const stringNames=noteArr(tuning.notes, tnNotation).split(' ');
   return { stringName: stringNames[bestIdx], cents };
 }
-
 async function toggleTuner() {
   if(tunerActive){stopTuner();return;}
   try {
@@ -707,7 +727,6 @@ async function toggleTuner() {
     document.getElementById('tuner-status').textContent='Microphone access denied or unavailable.';
   }
 }
-
 function stopTuner() {
   tunerActive=false;
   if(tunerRAF) cancelAnimationFrame(tunerRAF);
@@ -718,23 +737,17 @@ function stopTuner() {
   document.getElementById('tuner-btn').classList.remove('active');
   tunerSetDisplay(null);
 }
-
 function tunerSetDisplay(data) {
   const noteEl=document.getElementById('tuner-note');
   const infoEl=document.getElementById('tuner-info');
   const centsEl=document.getElementById('tuner-cents');
   const needleEl=document.getElementById('tuner-needle');
   const meterEl=document.getElementById('tuner-meter');
-
   if(!data) {
-    noteEl.textContent='–';
-    infoEl.textContent='';
-    centsEl.textContent='';
-    needleEl.style.left='50%';
-    meterEl.classList.remove('in-tune');
+    noteEl.textContent='–'; infoEl.textContent=''; centsEl.textContent='';
+    needleEl.style.left='50%'; meterEl.classList.remove('in-tune');
     return;
   }
-
   const {noteName, octave, cents, info} = data;
   noteEl.textContent = n(noteName, tnNotation) + octave;
   infoEl.textContent = info;
@@ -742,33 +755,21 @@ function tunerSetDisplay(data) {
   needleEl.style.left = Math.max(5,Math.min(95, 50+(cents/50)*45))+'%';
   meterEl.classList.toggle('in-tune', Math.abs(cents)<5);
 }
-
 function tunerLoop() {
   if(!tunerActive) return;
   tunerAnalyser.getFloatTimeDomainData(tunerBuf);
   const freq=detectPitch(tunerBuf, tunerAudioCtx.sampleRate);
-
   if(freq) {
     const {noteName, octave, cents: freeCents} = freqInfo(freq);
-
     if(activeTuning===null) {
-      tunerSetDisplay({
-        noteName, octave,
-        cents: freeCents,
-        info: freq.toFixed(1)+' Hz'
-      });
+      tunerSetDisplay({ noteName, octave, cents: freeCents, info: freq.toFixed(1)+' Hz' });
     } else {
       const {stringName, cents: tuningCents} = nearestString(freq, activeTuning);
-      tunerSetDisplay({
-        noteName, octave,
-        cents: tuningCents,
-        info: freq.toFixed(1)+' Hz  ·  String: '+stringName
-      });
+      tunerSetDisplay({ noteName, octave, cents: tuningCents, info: freq.toFixed(1)+' Hz  ·  String: '+stringName });
     }
   } else {
     tunerSetDisplay(null);
   }
-
   tunerRAF=requestAnimationFrame(tunerLoop);
 }
 </script>
