@@ -22,7 +22,7 @@
   --color-background-warning: rgba(186,117,23,0.25);
   --color-border-warning: rgba(186,117,23,0.6);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); }
 .switcher { display: flex; border-bottom: 0.5px solid var(--color-border-tertiary); padding: 0 8px; position: sticky; top: 0; background: var(--color-background-primary); z-index: 10; }
 .sw-btn { flex: 1; padding: 12px 0; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
@@ -48,7 +48,7 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .controls { display: flex; gap: 10px; margin-bottom: 16px; }
 .play-btn { flex: 1; height: 44px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 14px; font-weight: 500; cursor: pointer; transition: background .1s; }
 .play-btn.playing { background: #2a2a2a; border-color: rgba(255,255,255,0.4); }
-.tap-btn { flex: 1; height: 44px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; transition: all .1s; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.tap-btn { flex: 1; height: 44px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; transition: all .1s; }
 .tap-btn:active { background: #333; color: var(--color-text-primary); transform: scale(0.97); }
 .sig-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
 .sig-btn { font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all .1s; }
@@ -122,7 +122,7 @@ svg.fb { display: block; }
     <div class="beat-row" id="beat-row"></div>
     <div class="controls">
       <button class="play-btn" id="play-btn" onclick="togglePlay()">▶ Start</button>
-      <button class="tap-btn" ontouchstart="tap(); return false;">Tap Tempo</button>
+      <button class="tap-btn" onclick="tap()">Tap Tempo</button>
     </div>
     <div class="sig-row" id="sig-row">
       <span style="font-size:12px;color:var(--color-text-secondary);margin-right:4px;line-height:28px">Takt:</span>
