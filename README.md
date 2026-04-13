@@ -4,7 +4,7 @@ A personal guitar learning tool I built for myself – because I needed exactly 
 
 ## Features
 
-- **Metronome** – with time signature, subdivisions and tap tempo
+- **Metronome** – with time signature, subdivisions and tap tempo (PWA recommended on iOS)
 - **Chords** – fingering diagrams with finger numbers, filterable by category
 - **Scales** – interactive fretboard with pentatonic, blues, minor and major
 - **Tunings** – overview of common guitar tunings
@@ -22,6 +22,11 @@ No framework, no build system, no dependencies, no server.
 Just open it in a browser – or add it to your home screen on iOS/Android for a full offline-capable PWA experience. After the first load, the app works without an internet connection.
 Microphone access (for the tuner) is remembered by the browser after the first permission prompt. On iOS, this may reset after long periods of inactivity.
 
+## Known Issues
+- **Tap Tempo double-tap zoom on iOS Safari**: The browser version triggers 
+  iOS Safari's double-tap zoom when tapping quickly. This is a Safari bug 
+  (`touch-action: manipulation` is ignored in browser context). 
+  **Workaround: use the PWA** (Add to Home Screen) – the bug does not occur there.
 
 ## Credits
 
