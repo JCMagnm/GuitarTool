@@ -136,7 +136,10 @@ svg.fb { display: block; }
     Metronome
     <div class="beat-indicator" id="beat-indicator"></div>
   </button>
-  <button class="sw-btn" onclick="showPage('tuner')" id="sw-tuner">Tuner</button>
+  <button class="sw-btn" onclick="showPage('tuner')" id="sw-tuner">
+    <div class="playing-dot" id="tuner-dot"></div>
+    Tuner
+  </button>
   <button class="sw-btn" onclick="showPage('scales')" id="sw-scales">Scales</button>
   <button class="sw-btn" onclick="showPage('chords')" id="sw-chords">Chords</button>
   <button class="sw-btn" onclick="showPage('qz')" id="sw-qz">Circle of 5ths</button>
@@ -420,7 +423,8 @@ function togglePlay() {
   } else {
     clearTimeout(timerID);
     document.querySelectorAll('.beat-dot').forEach(d=>d.classList.remove('active'));
-    btn.textContent='▶ Start'; btn.classList.remove('playing'); dot.classList.remove('visible');
+    if(!polyPlaying) document.getElementById('playing-dot').classList.remove('visible');
+    btn.textContent='▶ Start'; btn.classList.remove('playing');
   }
 }
 function setBpm(v) { bpm=Math.max(30,Math.min(240,v)); document.getElementById('bpm-num').textContent=bpm; document.getElementById('bpm-slider').value=bpm; }
@@ -517,12 +521,14 @@ function startPoly() {
   polyNextTimeB=audioCtx.currentTime+0.05;
   polyScheduled=[];
   polyPlaying=true;
+  document.getElementById('playing-dot').classList.add('visible');
   polyScheduler();
   const btn=document.getElementById('poly-play-btn');
   btn.textContent='■ Stop Polyrhythm'; btn.classList.add('playing');
 }
 function stopPoly() {
   polyPlaying=false;
+  if(!playing) document.getElementById('playing-dot').classList.remove('visible');
   clearTimeout(polyTimerID);
   document.querySelectorAll('#poly-a-dots .poly-dot').forEach(d=>d.classList.remove('active-a'));
   document.querySelectorAll('#poly-b-dots .poly-dot').forEach(d=>d.classList.remove('active-b'));
@@ -902,6 +908,7 @@ async function toggleTuner() {
     document.getElementById('tuner-btn').textContent='■ Stop';
     document.getElementById('tuner-btn').classList.add('active');
     document.getElementById('tuner-status').textContent='';
+    document.getElementById('tuner-dot').classList.add('visible');
     tunerLoop();
   } catch(e) {
     document.getElementById('tuner-status').textContent='Microphone access denied or unavailable.';
@@ -915,6 +922,7 @@ function stopTuner() {
   tunerStream=tunerAudioCtx=tunerAnalyser=null;
   document.getElementById('tuner-btn').textContent='Enable Microphone';
   document.getElementById('tuner-btn').classList.remove('active');
+  document.getElementById('tuner-dot').classList.remove('visible');
   tunerSetDisplay(null);
 }
 function tunerSetDisplay(data) {
