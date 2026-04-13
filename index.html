@@ -384,7 +384,7 @@ function drawFretboard() {
   svg.innerHTML=html;
   const sc=SCALES[currentScale], toneNames=getScaleSemitones(currentKey,currentScale).map(t=>NOTE_NAMES[t]);
   document.getElementById('scale-info').innerHTML=
-    `<strong>${csNotation} ${sc.name}</strong> — ${sc.desc}<br>` +
+    `<strong>${sc.name}</strong> — ${sc.desc}<br>` +
     `<div style="margin-top:6px">${toneNames.map(t=>`<span class="pill">${n(t,csNotation)}</span>`).join('')}</div>`;
 }
 function setKey(k) { currentKey=k; renderKeyTabs(); drawFretboard(); }
