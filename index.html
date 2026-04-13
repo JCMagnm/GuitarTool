@@ -75,12 +75,12 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 
 /* ---- POLYRHYTHM ---- */
 .poly-section { margin-top: 24px; padding-top: 16px; border-top: 0.5px solid var(--color-border-tertiary); }
-.poly-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; align-items: center; }
+.poly-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
 .poly-voice { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .poly-voice-label { font-size: 11px; color: var(--color-text-secondary); }
 .poly-num { display: flex; align-items: center; gap: 6px; }
 .poly-num-display { font-size: 28px; font-weight: 500; width: 40px; text-align: center; }
-.poly-dots { display: flex; gap: 5px; justify-content: center; min-height: 14px; }
+.poly-dots { display: flex; gap: 5px; justify-content: center; min-height: 14px; flex-wrap: wrap; }
 .poly-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--color-border-secondary); transition: background .05s; }
 .poly-dot.active-a { background: #3B8BD4 !important; }
 .poly-dot.active-b { background: #2eab6e !important; }
