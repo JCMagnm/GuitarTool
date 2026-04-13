@@ -4,7 +4,7 @@ A free, offline-capable guitar tool for the browser – metronome, chromatic tun
 
 ## Features
 
-- **Metronome** – with time signature, subdivisions and tap tempo
+- **Metronome** – with time signature, subdivisions and tap tempo and polyrythms
 - **Guitar tuner** – chromatic tuner using the device microphone; select a tuning to lock to its strings, or use free mode for nearest semitone; displays note, cents deviation and tuning meter
 - **Scales** – interactive fretboard with pentatonic, blues, minor and major
 - **Chords** – fingering diagrams with finger numbers, filterable by category
