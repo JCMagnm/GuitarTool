@@ -642,7 +642,8 @@ renderGrooves();
 function toggleEgg() { eggManual=true; eggOn=!eggOn; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
 function checkEgg() {
   if(eggManual) return;
-  const should=new Set(mmSeq).size>=2;
+  const oddBars = mmSeq.filter(b => b % 2 !== 0);
+  const should = oddBars.length >= 2;
   if(should!==eggOn){ eggOn=should; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
 }
 function setTabName(name) {
