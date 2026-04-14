@@ -641,11 +641,12 @@ renderGrooves();
 // ============================================================
 function toggleEgg() { eggManual=true; eggOn=!eggOn; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
 function checkEgg() {
-  if(eggManual) return;
   const oddBars = new Set(mmSeq.filter(b => b % 2 !== 0));
-  const should = oddBars.length >= 2;
-  if(should!==eggOn){ eggOn=should; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
+  const should = oddBars.size >= 2;
+  if(eggManual && eggOn) return;
+  if(should !== eggOn) { eggOn=should; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
 }
+
 function setTabName(name) {
   const btn=document.getElementById('sw-metro');
   [...btn.childNodes].filter(n=>n.nodeType===3&&n.textContent.trim())
