@@ -522,21 +522,11 @@ function scheduler() {
     scheduleClick(nextTime, isAccent, currentBeat % subdivision !== 0);
     scheduledBeats.push({time: nextTime, beat: beatInBar, totalBeats: activeBars});
 
-    // Bar wechselt nach dem letzten Beat — aber buildDots erst beim nächsten Beat 0
-    const isLastSubdivision = currentBeat % subdivision === subdivision - 1;
-    const isLastBeat = beatInBar === activeBars - 1 && isLastSubdivision;
-    if(isLastBeat && mixedSequence.length > 0) {
-      const nextBarIndex = (mixedBarIndex + 1) % mixedSequence.length;
-      const nextBarBeats = mixedSequence[nextBarIndex];
-      // Schedule buildDots für den Zeitpunkt des nächsten Beats
-      const nextBeatTime = nextTime + dur;
-      setTimeout(() => {
-        if(playing) {
-          mixedBarIndex = nextBarIndex;
-          buildDots();
-          renderMixedMeter();
-        }
-      }, Math.max(0, (nextBeatTime - audioCtx.currentTime) * 1000 - 20));
+    // Letzter Beat dieses Bars — Index für nächsten Bar vorbereiten
+    if(beatInBar === activeBars - 1 && currentBeat % subdivision === subdivision - 1) {
+      if(mixedSequence.length > 0) {
+        mixedBarIndex = (mixedBarIndex + 1) % mixedSequence.length;
+      }
     }
 
     currentBeat++;
@@ -547,14 +537,20 @@ function scheduler() {
 }
 function updateDots() {
   if(!audioCtx) return;
-  const now=audioCtx.currentTime;
-  const recent=scheduledBeats.filter(b=>Math.abs(b.time-now)<0.03);
+  const now = audioCtx.currentTime;
+  const recent = scheduledBeats.filter(b => Math.abs(b.time - now) < 0.03);
   if(recent.length) {
-    const beat=recent[recent.length-1].beat;
-    document.querySelectorAll('.beat-dot').forEach((d,i)=>d.classList.toggle('active',i===beat));
-    scheduledBeats=scheduledBeats.filter(b=>b.time>now-0.1);
-    const ind=document.getElementById('beat-indicator');
-    ind.classList.add('pulse'); setTimeout(()=>ind.classList.remove('pulse'),80);
+    const current = recent[recent.length-1];
+    const beat = current.beat;
+    // Dots neu bauen wenn Beat 0 eines neuen Bars erreicht
+    if(beat === 0) {
+      buildDots();
+      renderMixedMeter();
+    }
+    document.querySelectorAll('.beat-dot').forEach((d,i) => d.classList.toggle('active', i === beat));
+    scheduledBeats = scheduledBeats.filter(b => b.time > now - 0.1);
+    const ind = document.getElementById('beat-indicator');
+    ind.classList.add('pulse'); setTimeout(() => ind.classList.remove('pulse'), 80);
   }
   if(playing) requestAnimationFrame(updateDots);
 }
