@@ -98,30 +98,29 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
          border-radius: var(--radius); padding: 12px; margin-bottom: 12px; }
 .popup-title { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
 
-/* Sig/Sub aligned grid */
-.sig-sub-grid { display: grid; grid-template-columns: max-content 1fr;
-                gap: 8px 10px; align-items: start; margin-bottom: 8px; }
-.ssl { font-size: 12px; color: var(--text2); white-space: nowrap; padding-top: 5px; }
-.ssb { display: flex; gap: 6px; flex-wrap: wrap; }
-.ssb .btn { font-size: 12px; padding: 4px 10px; height: auto; }
-.ssb .btn.active { background: var(--bg); color: var(--text); border-color: rgba(255,255,255,0.4); font-weight: 500; }
+/* ---- GROOVES (inline Mixed Meter) ---- */
+.grooves-section { margin-bottom: 4px; }
+.grooves-label { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+.grooves-bars { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.groove-bar { display: flex; align-items: center; gap: 8px; }
+.groove-bar-active { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0; flex-shrink: 0; }
+.groove-bar-active.on { opacity: 1; }
+.groove-bar-sig { font-size: 13px; font-weight: 500; min-width: 34px; text-align: center;
+                  color: var(--text2); }
+.groove-bar-sig.on { color: var(--accent); }
+.groove-bar-dots { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; flex: 1; }
+.groove-bar-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.grooves-footer { display: flex; gap: 8px; align-items: center; }
+.grooves-add { font-size: 12px; color: var(--text2); background: none; border: none;
+               cursor: pointer; font-family: inherit; text-decoration: underline; }
+.grooves-clear { font-size: 12px; color: var(--text2); background: none; border: none;
+                 cursor: pointer; font-family: inherit; text-decoration: underline; margin-left: auto; }
 
-/* Mixed Meter */
-.mm-btn { width: 100%; height: 32px; padding: 0 12px; margin-top: 4px; margin-bottom: 0;
-          font-size: 12px; justify-content: flex-start; gap: 8px; }
-.mm-btn.active { border-color: var(--accent); color: var(--accent); }
-.mm-summary { font-size: 11px; opacity: 0.65; }
-.mm-row { display: flex; align-items: center; gap: 8px; padding: 7px 0;
-          border-bottom: 0.5px solid var(--border2); }
-.mm-row:last-child { border-bottom: none; }
-.mm-num { font-size: 13px; font-weight: 500; min-width: 38px; text-align: center; }
-.mm-lbl { font-size: 11px; color: var(--text2); }
-.mm-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
-          opacity: 0; margin-left: auto; flex-shrink: 0; }
-.mm-dot.on { opacity: 1; }
-.mm-footer { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
-.mm-clear { margin-left: auto; font-size: 11px; color: var(--text2);
-            background: none; border: none; cursor: pointer; text-decoration: underline; font-family: inherit; }
+/* Subdivision row */
+.sub-section { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.sub-label { font-size: 12px; color: var(--text2); white-space: nowrap; }
+.sub-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.sub-btns .btn { padding: 4px 10px; height: auto; font-size: 13px; }
 
 /* Polyrhythm */
 .poly-wrap { margin-top: 20px; padding-top: 16px; border-top: 0.5px solid var(--border2); }
@@ -201,10 +200,12 @@ svg.fb { display: block; }
 <!-- METRONOME -->
 <div class="page active" id="page-metro">
 <div class="metro">
+
   <div class="bpm-num" id="bpm-num" contenteditable="true" inputmode="numeric"
     onclick="selAll(this)" onblur="setBpm(+this.textContent||120)"
     onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">120</div>
   <div class="bpm-sub">BPM</div>
+
   <div class="slider-row">
     <button class="btn btn-icon" onclick="changeBpm(-5)">−</button>
     <input type="range" min="30" max="240" value="120" id="bpm-slider" oninput="setBpm(+this.value)">
@@ -216,8 +217,10 @@ svg.fb { display: block; }
     <button class="btn btn-icon sm" onclick="changeBpm(+1)">+1</button>
   </div>
 
+  <!-- Beat dots -->
   <div class="beat-row" id="beat-row"></div>
 
+  <!-- Controls -->
   <div class="ctrl-row">
     <button class="btn btn-full" id="play-btn" onclick="togglePlay()" style="flex:1">▶ Start</button>
     <button class="btn btn-tap" onclick="tap()" style="flex:1">Tap Tempo</button>
@@ -238,30 +241,20 @@ svg.fb { display: block; }
     </div>
   </div>
 
-  <!-- Time sig + Subdivision -->
-  <div class="sig-sub-grid">
-    <span class="ssl">Time Signature:</span>
-    <div class="ssb" id="sig-row"></div>
-    <span class="ssl">Subdivision:</span>
-    <div class="ssb" id="sub-row"></div>
+  <!-- Grooves (inline Mixed Meter) -->
+  <div class="grooves-section">
+    <div class="grooves-label">Grooves</div>
+    <div class="grooves-bars" id="grooves-bars"></div>
+    <div class="grooves-footer">
+      <button class="grooves-add" onclick="addBar()">+ Add bar</button>
+      <button class="grooves-clear" onclick="clearBars()">Reset</button>
+    </div>
   </div>
 
-  <!-- Mixed Meter -->
-  <button class="btn mm-btn" id="mm-btn" onclick="toggleMM()">
-    <span>Mixed Meter</span>
-    <span class="mm-summary" id="mm-summary"></span>
-  </button>
-  <div class="popup" id="mm-popup" style="display:none;margin-top:6px">
-    <div class="label" style="margin-bottom:8px">
-      Bar Sequence
-      <span style="font-size:10px;opacity:0.5;margin-left:4px">− + to change · active bar highlighted</span>
-    </div>
-    <div id="mm-list"></div>
-    <div class="mm-footer">
-      <button class="btn btn-icon xs" onclick="addBar()" style="font-size:16px">+</button>
-      <span style="font-size:11px;color:var(--text2)">Add bar</span>
-      <button class="mm-clear" onclick="clearMM()">Clear all</button>
-    </div>
+  <!-- Subdivision -->
+  <div class="sub-section" style="margin-top:12px">
+    <span class="sub-label">Subdivision:</span>
+    <div class="sub-btns" id="sub-row"></div>
   </div>
 
   <!-- Polyrhythm -->
@@ -296,6 +289,7 @@ svg.fb { display: block; }
     </div>
     <button class="btn btn-full" id="poly-btn" onclick="togglePoly()">▶ Start Polyrhythm</button>
   </div>
+
 </div>
 </div>
 
@@ -445,22 +439,21 @@ function showPage(id) {
 // ============================================================
 // METRONOME STATE
 // ============================================================
-let bpm=120, beatsPerBar=4, subdivision=1;
+let bpm=120, subdivision=1;
 let playing=false;
 let audioCtx=null, nextTime=0, timerID=null;
 const AHEAD=0.1, LOOK=25;
 let scheduledBeats=[];
 
-let mmSeq=[];    // sequence of bar lengths
-let mmIdx=0;     // which bar we're in
-let barBeat=0;   // beat within current bar [0..activeBars-1]
-let subBeat=0;   // subdivision tick within beat [0..subdivision-1]
+// mmSeq is ALWAYS non-empty — minimum one bar
+let mmSeq=[4];
+let mmIdx=0;
+let barBeat=0;
+let subBeat=0;
 
-// Easter egg + tap
 let eggOn=false, eggManual=false;
 let tapTimes=[], tapMode='avg', tapWindow=3000;
 
-const SIGS=[2,3,4,5,6,7];
 const SUBS=[{v:1,l:'♩'},{v:2,l:'♪♪'},{v:3,l:'♪♪♪'},{v:4,l:'♬'}];
 
 // ============================================================
@@ -487,21 +480,20 @@ function click(time, isAccent, isSub) {
 function scheduler() {
   const dur=60/bpm/subdivision;
   while(nextTime < audioCtx.currentTime + AHEAD) {
-    const activeBars=mmSeq.length>0 ? mmSeq[mmIdx] : beatsPerBar;
+    const activeBars=mmSeq[mmIdx];
     const isAccent=barBeat===0 && subBeat===0;
     const isSub=subBeat!==0;
 
     click(nextTime, isAccent, isSub);
     if(subBeat===0) scheduledBeats.push({time:nextTime, beat:barBeat, barSize:activeBars});
 
-    // advance counters
     subBeat++;
     if(subBeat>=subdivision) {
       subBeat=0;
       barBeat++;
       if(barBeat>=activeBars) {
         barBeat=0;
-        if(mmSeq.length>0) mmIdx=(mmIdx+1)%mmSeq.length;
+        mmIdx=(mmIdx+1)%mmSeq.length;
       }
     }
     nextTime+=dur;
@@ -516,7 +508,7 @@ function updateVisuals() {
   const recent=scheduledBeats.filter(b=>Math.abs(b.time-now)<0.03);
   if(recent.length) {
     const cur=recent[recent.length-1];
-    if(cur.beat===0) { buildDots(); renderMM(); }
+    if(cur.beat===0) { buildDots(); renderGrooves(); }
     document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur.beat));
     scheduledBeats=scheduledBeats.filter(b=>b.time>now-0.1);
     const ind=document.getElementById('beat-ind');
@@ -585,74 +577,64 @@ function setTapWindow(v) {
 }
 
 // ============================================================
-// TIME SIG + SUBDIVISION
+// SUBDIVISION
 // ============================================================
-function setSig(v) {
-  beatsPerBar=v;
-  document.querySelectorAll('[data-sig]').forEach(b=>b.classList.toggle('active',+b.dataset.sig===v));
-  if(!playing) buildDots();
-}
 function setSub(v) {
   subdivision=v;
   document.querySelectorAll('[data-sub]').forEach(b=>b.classList.toggle('active',+b.dataset.sub===v));
 }
-function buildDots() {
-  const n=mmSeq.length>0 ? mmSeq[mmIdx] : beatsPerBar;
-  document.getElementById('beat-row').innerHTML=
-    Array.from({length:n},(_,i)=>`<div class="dot${i===0?' accent':''}"></div>`).join('');
-}
-
-const sigRow=document.getElementById('sig-row');
-SIGS.forEach(v=>{
-  const b=document.createElement('button');
-  b.className='btn'+(v===4?' active':''); b.textContent=v+'/4'; b.dataset.sig=v;
-  b.onclick=()=>setSig(v); sigRow.appendChild(b);
-});
 const subRow=document.getElementById('sub-row');
 SUBS.forEach(s=>{
   const b=document.createElement('button');
   b.className='btn'+(s.v===1?' active':''); b.textContent=s.l; b.dataset.sub=s.v;
   b.onclick=()=>setSub(s.v); subRow.appendChild(b);
 });
-buildDots();
 
 // ============================================================
-// MIXED METER
+// GROOVES (inline Mixed Meter — always at least one bar)
 // ============================================================
-function toggleMM() {
-  const p=document.getElementById('mm-popup');
-  p.style.display=p.style.display==='none'?'block':'none';
+function addBar() {
+  mmSeq.push(mmSeq[mmSeq.length-1]); // default: same as last bar
+  renderGrooves(); checkEgg();
 }
-function addBar() { mmSeq.push(beatsPerBar); renderMM(); checkEgg(); }
 function removeBar(i) {
+  if(mmSeq.length<=1) return; // never empty
   mmSeq.splice(i,1);
   if(mmIdx>=mmSeq.length) mmIdx=0;
-  if(barBeat>=(mmSeq[mmIdx]||beatsPerBar)) barBeat=0;
-  renderMM(); buildDots(); checkEgg();
+  if(barBeat>=mmSeq[mmIdx]) barBeat=0;
+  renderGrooves(); buildDots(); checkEgg();
 }
-function clearMM() {
-  mmSeq=[]; mmIdx=0; barBeat=0; subBeat=0;
-  renderMM(); buildDots(); checkEgg();
+function clearBars() {
+  mmSeq=[4]; mmIdx=0; barBeat=0; subBeat=0;
+  renderGrooves(); buildDots(); checkEgg();
 }
-function changeBar(i,d) {
+function changeBar(i, d) {
   mmSeq[i]=Math.max(2,Math.min(16,mmSeq[i]+d));
-  renderMM(); checkEgg();
+  renderGrooves(); checkEgg();
 }
-function renderMM() {
-  document.getElementById('mm-list').innerHTML=mmSeq.map((beats,i)=>`
-    <div class="mm-row">
+function buildDots() {
+  const n=mmSeq[mmIdx];
+  document.getElementById('beat-row').innerHTML=
+    Array.from({length:n},(_,i)=>`<div class="dot${i===0?' accent':''}"></div>`).join('');
+}
+function renderGrooves() {
+  document.getElementById('grooves-bars').innerHTML=mmSeq.map((beats,i)=>`
+    <div class="groove-bar">
+      <div class="groove-bar-active${i===mmIdx?' on':''}"></div>
       <button class="btn btn-icon xs" onclick="changeBar(${i},-1)" style="font-size:14px">−</button>
-      <span class="mm-num" style="${i===mmIdx?'color:var(--accent)':''}">${beats}/4</span>
+      <span class="groove-bar-sig${i===mmIdx?' on':''}">${beats}/4</span>
       <button class="btn btn-icon xs" onclick="changeBar(${i},+1)" style="font-size:14px">+</button>
-      <span class="mm-lbl">Bar ${i+1}</span>
-      <div class="mm-dot${i===mmIdx?' on':''}"></div>
-      <button onclick="removeBar(${i})" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:0 4px;font-family:inherit">×</button>
+      <div class="groove-bar-dots" id="groove-dots-${i}">
+        ${Array.from({length:beats},(_,b)=>`<div class="dot${b===0?' accent':''}${(i===mmIdx&&b===document.querySelectorAll('.dot.active').length-1&&playing)?'':''}" style="width:14px;height:14px"></div>`).join('')}
+      </div>
+      <div class="groove-bar-actions">
+        ${mmSeq.length>1?`<button onclick="removeBar(${i})" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:0 4px;font-family:inherit">×</button>`:''}
+      </div>
     </div>`).join('');
-
-  const sum=document.getElementById('mm-summary'), btn=document.getElementById('mm-btn');
-  if(mmSeq.length>0) { sum.textContent=mmSeq.map(b=>b+'/4').join(' → '); btn.classList.add('active'); }
-  else { sum.textContent=''; btn.classList.remove('active'); }
 }
+
+buildDots();
+renderGrooves();
 
 // ============================================================
 // EASTER EGG
@@ -1080,8 +1062,7 @@ const CAPO=['E','F','F#','G','G#','A','A#','B','C','C#','D','D#'];
 });
 function updateCapo(){
   const g=+document.getElementById('capo-grip').value, t=+document.getElementById('capo-target').value;
-  const f=(t-g+12)%12;
-  document.getElementById('capo-result').textContent=f===0?'No capo':`Capo fret ${f}`;
+  document.getElementById('capo-result').textContent=(t-g+12)%12===0?'No capo':`Capo fret ${(t-g+12)%12}`;
 }
 updateCapo();
 </script>
