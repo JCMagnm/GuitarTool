@@ -74,7 +74,7 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .subdivide-row { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
 
 /* ---- MIXED METER ---- */
-.mixed-meter-btn { height: 28px; padding: 0 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 12px; cursor: pointer; transition: all .1s; margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+.mixed-meter-btn {width: 100%; height: 28px; padding: 0 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 12px; cursor: pointer; transition: all .1s; margin-top: 10px; display: flex; align-items: center; gap: 6px; }
 .mixed-meter-btn.active { border-color: #E8593C; color: #E8593C; }
 .mixed-bar-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
 .mixed-bar-row:last-child { border-bottom: none; }
@@ -469,7 +469,6 @@ function checkToolTool() {
 function updateToolToolName() {
   const active=eggManual?!isToolTool:isToolTool;
   isToolTool=eggManual?!isToolTool:isToolTool; // sync state
-  // simpler: just read current state
   const btn=document.getElementById('sw-metro');
   // find the text node (3rd child after playing-dot and beat-indicator)
   const nodes=[...btn.childNodes].filter(n=>n.nodeType===3);
