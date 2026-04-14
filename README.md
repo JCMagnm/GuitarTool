@@ -23,7 +23,8 @@ A single HTML file plus a service worker (`sw.js`). No framework, no build syste
 
 - **Visual Bug**: On the scales tab are some minor visual bugs.
 
-Pro tip: Open the Metronome tab, switch Tap Tempo to “Last 2” mode and try to tap as fast as you can.
+## Pro tip
+Open the Metronome tab, switch Tap Tempo to “Last 2” mode and try to tap as fast as you can.
 
 ## Credits
 
