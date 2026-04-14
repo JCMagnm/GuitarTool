@@ -152,7 +152,12 @@ svg.fb { display: block; }
   <div class="metro">
 
     <!-- BPM -->
-    <div class="bpm-display" id="bpm-num">120</div>
+    <div class="bpm-display" id="bpm-num" 
+      contenteditable="true"
+      inputmode="numeric"
+      onclick="selectAll(this)"
+      onblur="setBpm(+this.textContent||120)"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">120</div>
     <div class="bpm-label">BPM</div>
     <div class="bpm-row">
       <button class="bpm-btn" onclick="changeBpm(-5)">−</button>
@@ -192,7 +197,12 @@ svg.fb { display: block; }
           <div class="poly-voice-label">Voice A</div>
           <div class="poly-num">
             <button class="bpm-btn" onclick="changePoly('a',-1)">−</button>
-            <div class="poly-num-display" id="poly-a-num">4</div>
+            <div class="poly-num-display" id="poly-a-num"
+              contenteditable="true"
+              inputmode="numeric"
+              onclick="selectAll(this)"
+              onblur="polyA=Math.max(2,+this.textContent||2);buildPolyDots();if(polyPlaying){stopPoly();startPoly()}"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">4</div>
             <button class="bpm-btn" onclick="changePoly('a',+1)">+</button>
           </div>
           <div class="poly-dots" id="poly-a-dots"></div>
@@ -202,7 +212,12 @@ svg.fb { display: block; }
           <div class="poly-voice-label">Voice B</div>
           <div class="poly-num">
             <button class="bpm-btn" onclick="changePoly('b',-1)">−</button>
-            <div class="poly-num-display" id="poly-b-num">3</div>
+            <div class="poly-num-display" id="poly-b-num"
+              contenteditable="true"
+              inputmode="numeric"
+              onclick="selectAll(this)"
+              onblur="polyB=Math.max(2,+this.textContent||2);buildPolyDots();if(polyPlaying){stopPoly();startPoly()}"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">3</div>
             <button class="bpm-btn" onclick="changePoly('b',+1)">+</button>
           </div>
           <div class="poly-dots" id="poly-b-dots"></div>
@@ -440,7 +455,17 @@ function togglePlay() {
     btn.textContent='▶ Start'; btn.classList.remove('playing');
   }
 }
-function setBpm(v) { bpm=Math.max(30,Math.min(240,v)); document.getElementById('bpm-num').textContent=bpm; document.getElementById('bpm-slider').value=bpm; }
+function setBpm(v) {
+  bpm = Math.max(30, v);
+  document.getElementById('bpm-num').textContent = bpm;
+  document.getElementById('bpm-slider').value = Math.min(240, bpm);
+}
+function selectAll(el) {
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(r);
+}
 function changeBpm(d) { setBpm(bpm+d); }
 function tap() {
   const now=Date.now();
@@ -472,8 +497,8 @@ let polyBeatA=0, polyBeatB=0;
 let polyScheduled=[];
 
 function changePoly(voice, delta) {
-  if(voice==='a') polyA=Math.max(2,Math.min(50,polyA+delta));
-  else polyB=Math.max(2,Math.min(50,polyB+delta));
+  if(voice==='a') polyA=Math.max(2,polyA+delta);
+  else polyB=Math.max(2,polyB+delta);
   document.getElementById('poly-a-num').textContent=polyA;
   document.getElementById('poly-b-num').textContent=polyB;
   buildPolyDots();
@@ -735,6 +760,7 @@ function renderChords() {
     `<div class="chord-card"><div class="chord-name">${n(c.name, csNotation)}</div>${drawChord(c)}</div>`
   ).join('');
 }
+renderChords();
 
 // ============================================================
 // CIRCLE OF FIFTHS
