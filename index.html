@@ -657,11 +657,11 @@ function renderMM() {
 // ============================================================
 // EASTER EGG
 // ============================================================
-function toggleEgg() { eggManual=true; eggOn=!eggOn; setTabName(eggOn?'ToolTool':'Metronome'); }
+function toggleEgg() { eggManual=true; eggOn=!eggOn; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
 function checkEgg() {
   if(eggManual) return;
   const should=new Set(mmSeq).size>=2;
-  if(should!==eggOn){ eggOn=should; setTabName(eggOn?'ToolTool':'Metronome'); }
+  if(should!==eggOn){ eggOn=should; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
 }
 function setTabName(name) {
   const btn=document.getElementById('sw-metro');
