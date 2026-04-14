@@ -177,6 +177,18 @@ svg.fb { display: block; }
     <div class="controls">
       <button class="play-btn" id="play-btn" onclick="togglePlay()">▶ Start</button>
       <button class="tap-btn" onclick="tap()">Tap Tempo</button>
+      <button class="bpm-btn" onclick="toggleTapSettings()" style="font-size:14px">⚙️</button>
+    </div>
+
+    <!-- Tap settings popup -->
+    <div id="tap-settings" style="display:none;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:12px;margin-bottom:16px">
+      <div class="label" style="margin-bottom:8px">Tap Tempo Settings</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <div class="tab active" id="tap-mode-avg" onclick="setTapMode('avg')">Average</div>
+        <div class="tab" id="tap-mode-last" onclick="setTapMode('last')">Last 2</div>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">Window: <span id="tap-window-label">3s</span></div>
+      <input type="range" min="1" max="10" value="3" style="width:100%" oninput="setTapWindow(+this.value)">
     </div>
 
     <!-- Time signature -->
@@ -399,9 +411,24 @@ let bpm=120, beatsPerBar=4, subdivision=1;
 let playing=false, currentBeat=0, scheduledBeats=[];
 let audioCtx=null, nextTime=0, lookahead=25, scheduleAhead=0.1;
 let timerID=null, tapTimes=[];
+let tapMode = 'avg';
+let tapWindow = 3000;
 const SIGS=[2,3,4,5,6,7];
 const SUBS=[{v:1,l:'♩'},{v:2,l:'♪♪'},{v:3,l:'♪♪♪'},{v:4,l:'♬'}];
 
+function toggleTapSettings() {
+  const s = document.getElementById('tap-settings');
+  s.style.display = s.style.display === 'none' ? 'block' : 'none';
+}
+function setTapMode(mode) {
+  tapMode = mode;
+  document.getElementById('tap-mode-avg').classList.toggle('active', mode === 'avg');
+  document.getElementById('tap-mode-last').classList.toggle('active', mode === 'last');
+}
+function setTapWindow(val) {
+  tapWindow = val * 1000;
+  document.getElementById('tap-window-label').textContent = val + 's';
+}
 function initAudio() {
   if(!audioCtx) {
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -468,11 +495,16 @@ function selectAll(el) {
 }
 function changeBpm(d) { setBpm(bpm+d); }
 function tap() {
-  const now=Date.now();
-  tapTimes=tapTimes.filter(t=>now-t<3000); tapTimes.push(now);
-  if(tapTimes.length>=2) {
-    const diffs=tapTimes.slice(1).map((t,i)=>t-tapTimes[i]);
-    setBpm(Math.round(60000/(diffs.reduce((a,b)=>a+b,0)/diffs.length)));
+  const now = Date.now();
+  tapTimes = tapTimes.filter(t => now - t < tapWindow);
+  tapTimes.push(now);
+  if(tapTimes.length >= 2) {
+    if(tapMode === 'last') {
+      setBpm(Math.round(60000 / (tapTimes[tapTimes.length-1] - tapTimes[tapTimes.length-2])));
+    } else {
+      const diffs = tapTimes.slice(1).map((t,i) => t - tapTimes[i]);
+      setBpm(Math.round(60000 / (diffs.reduce((a,b) => a+b,0) / diffs.length)));
+    }
   }
 }
 function setSig(val) { beatsPerBar=val; document.querySelectorAll('.sig-btn').forEach(b=>b.classList.toggle('active',+b.dataset.n===val)); buildDots(); }
