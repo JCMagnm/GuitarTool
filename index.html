@@ -425,6 +425,9 @@ let audioCtx=null, nextTime=0, lookahead=25, scheduleAhead=0.1;
 let timerID=null, tapTimes=[];
 let tapMode = 'avg';
 let tapWindow = 3000;
+let mixedSequence = []; // leer = normaler Betrieb
+let mixedBarIndex = 0;
+let currentBarBeat = 0;
 const SIGS=[2,3,4,5,6,7];
 const SUBS=[{v:1,l:'♩'},{v:2,l:'♪♪'},{v:3,l:'♪♪♪'},{v:4,l:'♬'}];
 
@@ -547,11 +550,6 @@ SIGS.forEach(val=>{ const b=document.createElement('button'); b.className='sig-b
 const subRow=document.getElementById('sub-row');
 SUBS.forEach(s=>{ const b=document.createElement('button'); b.className='sig-btn sub-btn'+(s.v===1?' active':''); b.textContent=s.l; b.dataset.v=s.v; b.onclick=()=>setSub(s.v); subRow.appendChild(b); });
 buildDots();
-
-// Mixed Meter
-let mixedSequence = []; // leer = normaler Betrieb
-let mixedBarIndex = 0;
-let currentBarBeat = 0;
 
 function addMixedBar() {
   mixedSequence.push(beatsPerBar); // aktueller Takt als Default
