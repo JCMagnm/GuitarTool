@@ -496,6 +496,9 @@ function selectAll(el) {
 function changeBpm(d) { setBpm(bpm+d); }
 function tap() {
   const now = Date.now();
+  if(tapTimes.length > 0 && now - tapTimes[tapTimes.length-1] > 3000) {
+    tapTimes = [];
+  }
   tapTimes = tapTimes.filter(t => now - t < tapWindow);
   tapTimes.push(now);
   if(tapTimes.length >= 2) {
