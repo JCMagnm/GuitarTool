@@ -50,7 +50,7 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 
 /* ---- METRONOME ---- */
 .metro { max-width: 420px; margin: 0 auto; }
-.bpm-display { font-size: 48px; font-weight: 500; color: var(--color-text-primary); text-align: center; line-height: 1; }
+.bpm-display { font-size: 48px; font-weight: 500; color: var(--color-text-primary); text-align: center; line-height: 1; cursor: text; }
 .bpm-label { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-top: 4px; margin-bottom: 16px; }
 .bpm-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
 .bpm-row input[type=range] { flex: 1; }
@@ -59,7 +59,7 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .bpm-btn:hover { background: #333; }
 .bpm-fine-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 16px; }
 .bpm-fine-label { font-size: 11px; color: var(--color-text-secondary); }
-.beat-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+.beat-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
 .beat-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--color-border-secondary); transition: background .05s; }
 .beat-dot.accent { background: rgba(186,117,23,0.25); border: 1.5px solid rgba(186,117,23,0.6); }
 .beat-dot.active { background: #E8593C !important; }
@@ -72,9 +72,15 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .sig-btn { font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all .1s; }
 .sig-btn.active { background: #1a1a1a; color: var(--color-text-primary); border-color: rgba(255,255,255,0.4); font-weight: 500; }
 .subdivide-row { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
-.mixed-bar { font-size:12px; padding:4px 8px; border-radius:var(--border-radius-md); border:0.5px solid var(--color-border-secondary); background:var(--color-background-secondary); color:var(--color-text-secondary); display:flex; align-items:center; gap:4px; }
-.mixed-bar.active-bar { border-color:#E8593C; color:var(--color-text-primary); }
-.mixed-bar-remove { font-size:10px; color:var(--color-text-secondary); cursor:pointer; padding:0 2px; }
+
+/* ---- MIXED METER ---- */
+.mixed-meter-btn { height: 28px; padding: 0 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 12px; cursor: pointer; transition: all .1s; margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+.mixed-meter-btn.active { border-color: #E8593C; color: #E8593C; }
+.mixed-bar-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.mixed-bar-row:last-child { border-bottom: none; }
+.mixed-bar-label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); min-width: 40px; text-align: center; }
+.mixed-bar-active { width: 8px; height: 8px; border-radius: 50%; background: #E8593C; opacity: 0; margin-left: auto; }
+.mixed-bar-active.on { opacity: 1; }
 
 /* ---- POLYRHYTHM ---- */
 .poly-section { margin-top: 24px; padding-top: 16px; border-top: 0.5px solid var(--color-border-tertiary); }
@@ -148,14 +154,11 @@ svg.fb { display: block; }
   <button class="sw-btn" onclick="showPage('qz')" id="sw-qz">Circle of 5ths</button>
 </div>
 
-<!-- ============================================================
-     METRONOME PAGE
-     ============================================================ -->
+<!-- METRONOME PAGE -->
 <div class="page active" id="page-metro">
   <div class="metro">
 
-    <!-- BPM -->
-    <div class="bpm-display" id="bpm-num" 
+    <div class="bpm-display" id="bpm-num"
       contenteditable="true"
       inputmode="numeric"
       onclick="selectAll(this)"
@@ -173,10 +176,8 @@ svg.fb { display: block; }
       <button class="bpm-btn small" onclick="changeBpm(+1)">+1</button>
     </div>
 
-    <!-- Beat dots -->
     <div class="beat-row" id="beat-row"></div>
 
-    <!-- Controls -->
     <div class="controls">
       <button class="play-btn" id="play-btn" onclick="togglePlay()">▶ Start</button>
       <button class="tap-btn" onclick="tap()">Tap Tempo</button>
@@ -192,6 +193,9 @@ svg.fb { display: block; }
       </div>
       <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">Window: <span id="tap-window-label">3s</span></div>
       <input type="range" min="1" max="30" value="3" style="width:100%" oninput="setTapWindow(+this.value)">
+      <div style="text-align:right;margin-top:8px">
+        <span onclick="toggleToolTool()" style="cursor:pointer;opacity:0.2;font-size:11px;user-select:none">🥚</span>
+      </div>
     </div>
 
     <!-- Time signature -->
@@ -200,11 +204,19 @@ svg.fb { display: block; }
     </div>
 
     <!-- Mixed Meter -->
-    <div style="margin-top:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:12px;color:var(--color-text-secondary)">Mixed Meter:</span>
-        <div id="mixed-meter-list" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-        <button class="bpm-btn small" onclick="addMixedBar()" style="font-size:16px;width:24px;height:24px">+</button>
+    <div style="margin-top:10px;">
+      <button class="mixed-meter-btn" id="mixed-meter-btn" onclick="toggleMixedMeter()">
+        <span>Mixed Meter</span>
+        <span id="mixed-meter-summary" style="font-size:11px;opacity:0.6"></span>
+      </button>
+      <div id="mixed-meter-popup" style="display:none;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:12px;margin-top:6px">
+        <div class="label" style="margin-bottom:8px">Bar Sequence <span style="font-size:10px;opacity:0.5">(click number to cycle, active bar highlighted)</span></div>
+        <div id="mixed-bar-list"></div>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+          <button class="bpm-btn small" onclick="addMixedBar()" style="width:28px;height:28px;font-size:16px">+</button>
+          <span style="font-size:11px;color:var(--color-text-secondary)">Add bar</span>
+          <button onclick="clearMixedMeter()" style="margin-left:auto;font-size:11px;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;text-decoration:underline">Clear all</button>
+        </div>
       </div>
     </div>
 
@@ -253,9 +265,7 @@ svg.fb { display: block; }
   </div>
 </div>
 
-<!-- ============================================================
-     TUNER PAGE
-     ============================================================ -->
+<!-- TUNER PAGE -->
 <div class="page" id="page-tuner">
   <div class="tuner-wrap">
     <div class="notation-bar" style="width:100%">
@@ -278,9 +288,7 @@ svg.fb { display: block; }
   </div>
 </div>
 
-<!-- ============================================================
-     SCALES PAGE
-     ============================================================ -->
+<!-- SCALES PAGE -->
 <div class="page" id="page-scales">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en" onclick="setCSNotation('en')">English (B/Bb)</button>
@@ -306,9 +314,7 @@ svg.fb { display: block; }
   </div>
 </div>
 
-<!-- ============================================================
-     CHORDS PAGE
-     ============================================================ -->
+<!-- CHORDS PAGE -->
 <div class="page" id="page-chords">
   <div class="notation-bar">
     <button class="tab active" id="cs-btn-en-chords" onclick="setCSNotation('en')">English (B/Bb)</button>
@@ -351,9 +357,7 @@ svg.fb { display: block; }
   </div>
 </div>
 
-<!-- ============================================================
-     CIRCLE OF FIFTHS PAGE
-     ============================================================ -->
+<!-- CIRCLE OF FIFTHS PAGE -->
 <div class="page" id="page-qz">
   <div class="qz-wrap">
     <div style="display:flex;gap:8px;align-self:flex-end;margin-bottom:-8px">
@@ -423,27 +427,76 @@ let bpm=120, beatsPerBar=4, subdivision=1;
 let playing=false, currentBeat=0, scheduledBeats=[];
 let audioCtx=null, nextTime=0, lookahead=25, scheduleAhead=0.1;
 let timerID=null, tapTimes=[];
-let tapMode = 'avg';
-let tapWindow = 3000;
-let mixedSequence = []; // leer = normaler Betrieb
-let mixedBarIndex = 0;
-let currentBarBeat = 0;
+let tapMode='avg', tapWindow=3000;
+// Mixed Meter — defined early so buildDots() can use it
+let mixedSequence=[], mixedBarIndex=0;
+// Easter egg
+let isToolTool=false, eggManual=false;
 const SIGS=[2,3,4,5,6,7];
 const SUBS=[{v:1,l:'♩'},{v:2,l:'♪♪'},{v:3,l:'♪♪♪'},{v:4,l:'♬'}];
 
+// ---- Tap settings ----
 function toggleTapSettings() {
-  const s = document.getElementById('tap-settings');
-  s.style.display = s.style.display === 'none' ? 'block' : 'none';
+  const s=document.getElementById('tap-settings');
+  s.style.display=s.style.display==='none'?'block':'none';
 }
 function setTapMode(mode) {
-  tapMode = mode;
-  document.getElementById('tap-mode-avg').classList.toggle('active', mode === 'avg');
-  document.getElementById('tap-mode-last').classList.toggle('active', mode === 'last');
+  tapMode=mode;
+  document.getElementById('tap-mode-avg').classList.toggle('active',mode==='avg');
+  document.getElementById('tap-mode-last').classList.toggle('active',mode==='last');
 }
 function setTapWindow(val) {
-  tapWindow = val * 1000;
-  document.getElementById('tap-window-label').textContent = val + 's';
+  tapWindow=val*1000;
+  document.getElementById('tap-window-label').textContent=val+'s';
 }
+
+// ---- Easter egg ----
+function toggleToolTool() {
+  eggManual=!eggManual;
+  updateToolToolName();
+}
+function checkToolTool() {
+  if(eggManual) return; // manual override takes precedence
+  const uniqueSigs=new Set(mixedSequence).size;
+  const shouldBe=uniqueSigs>=2;
+  if(shouldBe!==isToolTool) {
+    isToolTool=shouldBe;
+    updateToolToolName();
+  }
+}
+function updateToolToolName() {
+  const active=eggManual?!isToolTool:isToolTool;
+  isToolTool=eggManual?!isToolTool:isToolTool; // sync state
+  // simpler: just read current state
+  const btn=document.getElementById('sw-metro');
+  // find the text node (3rd child after playing-dot and beat-indicator)
+  const nodes=[...btn.childNodes].filter(n=>n.nodeType===3);
+  if(nodes.length>0) nodes[0].textContent=isToolTool?' ToolTool 🥁':' Metronome';
+}
+
+// cleaner version — rewrite:
+function setTabName(name) {
+  const btn=document.getElementById('sw-metro');
+  btn.childNodes.forEach(node=>{
+    if(node.nodeType===3 && node.textContent.trim()) node.textContent=' '+name;
+  });
+}
+function toggleToolTool() {
+  eggManual=true;
+  isToolTool=!isToolTool;
+  setTabName(isToolTool?'ToolTool 🥁':'Metronome');
+}
+function checkToolTool() {
+  if(eggManual) return;
+  const uniqueSigs=new Set(mixedSequence).size;
+  const shouldBe=uniqueSigs>=2;
+  if(shouldBe!==isToolTool) {
+    isToolTool=shouldBe;
+    setTabName(isToolTool?'ToolTool 🥁':'Metronome');
+  }
+}
+
+// ---- Audio ----
 function initAudio() {
   if(!audioCtx) {
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -464,15 +517,26 @@ function scheduler() {
   while(nextTime < audioCtx.currentTime + scheduleAhead) {
     const activeBars = mixedSequence.length > 0 ? mixedSequence[mixedBarIndex] : beatsPerBar;
     const beatInBar = Math.floor(currentBeat / subdivision) % activeBars;
+    const isAccent = beatInBar === 0;
 
-    scheduleClick(nextTime, beatInBar === 0, currentBeat % subdivision !== 0);
+    scheduleClick(nextTime, isAccent, currentBeat % subdivision !== 0);
     scheduledBeats.push({time: nextTime, beat: beatInBar, totalBeats: activeBars});
 
-    // Bar-Ende: letzter Beat des aktuellen Bars
-    const isLastBeat = beatInBar === activeBars - 1 && currentBeat % subdivision === subdivision - 1;
+    // Bar wechselt nach dem letzten Beat — aber buildDots erst beim nächsten Beat 0
+    const isLastSubdivision = currentBeat % subdivision === subdivision - 1;
+    const isLastBeat = beatInBar === activeBars - 1 && isLastSubdivision;
     if(isLastBeat && mixedSequence.length > 0) {
-      mixedBarIndex = (mixedBarIndex + 1) % mixedSequence.length;
-      renderMixedMeter();
+      const nextBarIndex = (mixedBarIndex + 1) % mixedSequence.length;
+      const nextBarBeats = mixedSequence[nextBarIndex];
+      // Schedule buildDots für den Zeitpunkt des nächsten Beats
+      const nextBeatTime = nextTime + dur;
+      setTimeout(() => {
+        if(playing) {
+          mixedBarIndex = nextBarIndex;
+          buildDots();
+          renderMixedMeter();
+        }
+      }, Math.max(0, (nextBeatTime - audioCtx.currentTime) * 1000 - 20));
     }
 
     currentBeat++;
@@ -496,12 +560,13 @@ function updateDots() {
 }
 function togglePlay() {
   initAudio();
-  mixedBarIndex = 0;
+  mixedBarIndex=0;
   if(audioCtx.state==='suspended') audioCtx.resume();
   playing=!playing;
   const btn=document.getElementById('play-btn'), dot=document.getElementById('playing-dot');
   if(playing) {
     currentBeat=0; nextTime=audioCtx.currentTime+0.05; scheduledBeats=[];
+    buildDots();
     scheduler(); btn.textContent='■ Stop'; btn.classList.add('playing'); dot.classList.add('visible');
   } else {
     clearTimeout(timerID);
@@ -511,39 +576,37 @@ function togglePlay() {
   }
 }
 function setBpm(v) {
-  bpm = Math.max(30, v);
-  document.getElementById('bpm-num').textContent = bpm;
-  document.getElementById('bpm-slider').value = Math.min(240, bpm);
+  bpm=Math.max(30,v);
+  document.getElementById('bpm-num').textContent=bpm;
+  document.getElementById('bpm-slider').value=Math.min(240,bpm);
 }
 function selectAll(el) {
-  const r = document.createRange();
+  const r=document.createRange();
   r.selectNodeContents(el);
   window.getSelection().removeAllRanges();
   window.getSelection().addRange(r);
 }
 function changeBpm(d) { setBpm(bpm+d); }
 function tap() {
-  const now = Date.now();
-  if(tapTimes.length > 0 && now - tapTimes[tapTimes.length-1] > 3000) {
-    tapTimes = [];
-  }
-  tapTimes = tapTimes.filter(t => now - t < tapWindow);
+  const now=Date.now();
+  if(tapTimes.length>0 && now-tapTimes[tapTimes.length-1]>3000) tapTimes=[];
+  tapTimes=tapTimes.filter(t=>now-t<tapWindow);
   tapTimes.push(now);
-  if(tapTimes.length >= 2) {
-    if(tapMode === 'last') {
-      setBpm(Math.round(60000 / (tapTimes[tapTimes.length-1] - tapTimes[tapTimes.length-2])));
+  if(tapTimes.length>=2) {
+    if(tapMode==='last') {
+      setBpm(Math.round(60000/(tapTimes[tapTimes.length-1]-tapTimes[tapTimes.length-2])));
     } else {
-      const diffs = tapTimes.slice(1).map((t,i) => t - tapTimes[i]);
-      setBpm(Math.round(60000 / (diffs.reduce((a,b) => a+b,0) / diffs.length)));
+      const diffs=tapTimes.slice(1).map((t,i)=>t-tapTimes[i]);
+      setBpm(Math.round(60000/(diffs.reduce((a,b)=>a+b,0)/diffs.length)));
     }
   }
 }
 function setSig(val) { beatsPerBar=val; document.querySelectorAll('.sig-btn').forEach(b=>b.classList.toggle('active',+b.dataset.n===val)); buildDots(); }
 function setSub(val) { subdivision=val; document.querySelectorAll('.sub-btn').forEach(b=>b.classList.toggle('active',+b.dataset.v===val)); }
 function buildDots() {
-  const active = mixedSequence.length > 0 ? mixedSequence[mixedBarIndex] : beatsPerBar;
-  document.getElementById('beat-row').innerHTML = Array.from({length: active}, (_, i) =>
-    `<div class="beat-dot${i === 0 ? ' accent' : ''}"></div>`).join('');
+  const active=mixedSequence.length>0?mixedSequence[mixedBarIndex]:beatsPerBar;
+  document.getElementById('beat-row').innerHTML=Array.from({length:active},(_,i)=>
+    `<div class="beat-dot${i===0?' accent':''}"></div>`).join('');
 }
 const sigRow=document.getElementById('sig-row');
 SIGS.forEach(val=>{ const b=document.createElement('button'); b.className='sig-btn'+(val===4?' active':''); b.textContent=val+'/4'; b.dataset.n=val; b.onclick=()=>setSig(val); sigRow.appendChild(b); });
@@ -551,30 +614,62 @@ const subRow=document.getElementById('sub-row');
 SUBS.forEach(s=>{ const b=document.createElement('button'); b.className='sig-btn sub-btn'+(s.v===1?' active':''); b.textContent=s.l; b.dataset.v=s.v; b.onclick=()=>setSub(s.v); subRow.appendChild(b); });
 buildDots();
 
+// ============================================================
+// MIXED METER
+// ============================================================
+function toggleMixedMeter() {
+  const p=document.getElementById('mixed-meter-popup');
+  const btn=document.getElementById('mixed-meter-btn');
+  const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  btn.classList.toggle('active', mixedSequence.length>0);
+}
 function addMixedBar() {
-  mixedSequence.push(beatsPerBar); // aktueller Takt als Default
+  mixedSequence.push(beatsPerBar);
   renderMixedMeter();
+  checkToolTool();
 }
-
 function removeMixedBar(i) {
-  mixedSequence.splice(i, 1);
-  if(mixedBarIndex >= mixedSequence.length) mixedBarIndex = 0;
+  mixedSequence.splice(i,1);
+  if(mixedBarIndex>=mixedSequence.length) mixedBarIndex=0;
   renderMixedMeter();
+  buildDots();
+  checkToolTool();
 }
-
+function clearMixedMeter() {
+  mixedSequence=[];
+  mixedBarIndex=0;
+  renderMixedMeter();
+  buildDots();
+  checkToolTool();
+}
+function changeMixedBar(i, delta) {
+  mixedSequence[i]=Math.max(2, Math.min(16, mixedSequence[i]+delta));
+  renderMixedMeter();
+  checkToolTool();
+}
 function renderMixedMeter() {
-  document.getElementById('mixed-meter-list').innerHTML = mixedSequence.map((beats, i) =>
-    `<div class="mixed-bar${i === mixedBarIndex ? ' active-bar' : ''}">
-      <span onclick="cycleMixedBar(${i})" style="cursor:pointer">${beats}/4</span>
-      <span class="mixed-bar-remove" onclick="removeMixedBar(${i})">×</span>
+  // Update popup list
+  document.getElementById('mixed-bar-list').innerHTML=mixedSequence.map((beats,i)=>
+    `<div class="mixed-bar-row">
+      <button class="bpm-btn small" onclick="changeMixedBar(${i},-1)" style="width:24px;height:24px;font-size:14px">−</button>
+      <span class="mixed-bar-label" style="${i===mixedBarIndex?'color:#E8593C':''}">${beats}/4</span>
+      <button class="bpm-btn small" onclick="changeMixedBar(${i},+1)" style="width:24px;height:24px;font-size:14px">+</button>
+      <span style="font-size:11px;color:var(--color-text-secondary);margin-left:4px">Bar ${i+1}</span>
+      <div class="mixed-bar-active${i===mixedBarIndex?' on':''}"></div>
+      <button onclick="removeMixedBar(${i})" style="background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:14px;margin-left:4px">×</button>
     </div>`
   ).join('');
-}
-
-function cycleMixedBar(i) {
-  // Klick auf einen Bar ändert die Taktart (2-13)
-  mixedSequence[i] = mixedSequence[i] >= 13 ? 2 : mixedSequence[i] + 1;
-  renderMixedMeter();
+  // Update summary button
+  const summary=document.getElementById('mixed-meter-summary');
+  const btn=document.getElementById('mixed-meter-btn');
+  if(mixedSequence.length>0) {
+    summary.textContent=mixedSequence.map(b=>b+'/4').join(' → ');
+    btn.classList.add('active');
+  } else {
+    summary.textContent='';
+    btn.classList.remove('active');
+  }
 }
 
 // ============================================================
@@ -611,17 +706,17 @@ function schedulePolyClick(time, freq, vol) {
 }
 function polyScheduler() {
   if(!audioCtx) return;
-  const durA = 60 / bpm;
-  const durB = (60 / bpm) * (polyA / polyB);
+  const durA=60/bpm;
+  const durB=(60/bpm)*(polyA/polyB);
   const ahead=audioCtx.currentTime+scheduleAhead;
   while(polyNextTimeA<ahead) {
-    schedulePolyClick(polyNextTimeA, 880, 0.5);
-    polyScheduled.push({time:polyNextTimeA, voice:'a', beat:polyBeatA%polyA});
+    schedulePolyClick(polyNextTimeA,880,0.5);
+    polyScheduled.push({time:polyNextTimeA,voice:'a',beat:polyBeatA%polyA});
     polyBeatA++; polyNextTimeA+=durA;
   }
   while(polyNextTimeB<ahead) {
-    schedulePolyClick(polyNextTimeB, 440, 0.4);
-    polyScheduled.push({time:polyNextTimeB, voice:'b', beat:polyBeatB%polyB});
+    schedulePolyClick(polyNextTimeB,440,0.4);
+    polyScheduled.push({time:polyNextTimeB,voice:'b',beat:polyBeatB%polyB});
     polyBeatB++; polyNextTimeB+=durB;
   }
   polyTimerID=setTimeout(polyScheduler, lookahead);
@@ -632,11 +727,8 @@ function updatePolyDots() {
   const now=audioCtx.currentTime;
   const recent=polyScheduled.filter(b=>Math.abs(b.time-now)<0.04);
   recent.forEach(b=>{
-    if(b.voice==='a') {
-      document.querySelectorAll('#poly-a-dots .poly-dot').forEach((d,i)=>d.classList.toggle('active-a',i===b.beat));
-    } else {
-      document.querySelectorAll('#poly-b-dots .poly-dot').forEach((d,i)=>d.classList.toggle('active-b',i===b.beat));
-    }
+    if(b.voice==='a') document.querySelectorAll('#poly-a-dots .poly-dot').forEach((d,i)=>d.classList.toggle('active-a',i===b.beat));
+    else document.querySelectorAll('#poly-b-dots .poly-dot').forEach((d,i)=>d.classList.toggle('active-b',i===b.beat));
   });
   polyScheduled=polyScheduled.filter(b=>b.time>now-0.1);
   if(polyPlaying) requestAnimationFrame(updatePolyDots);
@@ -663,9 +755,7 @@ function stopPoly() {
   const btn=document.getElementById('poly-play-btn');
   btn.textContent='▶ Start Polyrhythm'; btn.classList.remove('playing');
 }
-function togglePoly() {
-  if(polyPlaying) stopPoly(); else startPoly();
-}
+function togglePoly() { if(polyPlaying) stopPoly(); else startPoly(); }
 buildPolyDots();
 
 // ============================================================
@@ -673,15 +763,15 @@ buildPolyDots();
 // ============================================================
 const TUNINGS=[
   {name:'Standard',    notes:'E A D G B e',       open:[4,9,2,7,11,4],  freqs:[82.41,110.00,146.83,196.00,246.94,329.63]},
-  {name:'Drop D',      notes:'D A D G B e',       open:[2,9,2,7,11,4],  freqs:[73.42,110.00,146.83,196.00,246.94,329.63]},
-  {name:'Open E',      notes:'E B E G# B e',      open:[4,11,4,8,11,4], freqs:[82.41,123.47,164.81,207.65,246.94,329.63]},
-  {name:'Open G',      notes:'D G D G B D',       open:[2,7,2,7,11,2],  freqs:[73.42,98.00,146.83,196.00,246.94,293.66]},
-  {name:'Open D',      notes:'D A D F# A D',      open:[2,9,2,6,9,2],   freqs:[73.42,110.00,146.83,185.00,220.00,293.66]},
-  {name:'DADGAD',      notes:'D A D G A D',       open:[2,9,2,7,9,2],   freqs:[73.42,110.00,146.83,196.00,220.00,293.66]},
-  {name:'Drop C',      notes:'C G C F A D',       open:[0,7,0,5,9,2],   freqs:[65.41,98.00,130.81,174.61,220.00,293.66]},
-  {name:'Drop B',      notes:'B F# B E G# C#',    open:[11,6,11,4,8,1], freqs:[61.74,92.50,123.47,164.81,207.65,277.18]},
-  {name:'Half step ↓', notes:'Eb Ab Db Gb Bb eb', open:[3,8,1,6,10,3],  freqs:[77.78,103.83,138.59,184.99,233.08,311.13]},
-  {name:'Full step ↓', notes:'D G C F A D',       open:[2,7,0,5,9,2],   freqs:[73.42,98.00,130.81,174.61,220.00,293.66]},
+  {name:'Drop D',      notes:'D A D G B e',        open:[2,9,2,7,11,4],  freqs:[73.42,110.00,146.83,196.00,246.94,329.63]},
+  {name:'Open E',      notes:'E B E G# B e',       open:[4,11,4,8,11,4], freqs:[82.41,123.47,164.81,207.65,246.94,329.63]},
+  {name:'Open G',      notes:'D G D G B D',        open:[2,7,2,7,11,2],  freqs:[73.42,98.00,146.83,196.00,246.94,293.66]},
+  {name:'Open D',      notes:'D A D F# A D',       open:[2,9,2,6,9,2],   freqs:[73.42,110.00,146.83,185.00,220.00,293.66]},
+  {name:'DADGAD',      notes:'D A D G A D',        open:[2,9,2,7,9,2],   freqs:[73.42,110.00,146.83,196.00,220.00,293.66]},
+  {name:'Drop C',      notes:'C G C F A D',        open:[0,7,0,5,9,2],   freqs:[65.41,98.00,130.81,174.61,220.00,293.66]},
+  {name:'Drop B',      notes:'B F# B E G# C#',     open:[11,6,11,4,8,1], freqs:[61.74,92.50,123.47,164.81,207.65,277.18]},
+  {name:'Half step ↓', notes:'Eb Ab Db Gb Bb eb',  open:[3,8,1,6,10,3],  freqs:[77.78,103.83,138.59,184.99,233.08,311.13]},
+  {name:'Full step ↓', notes:'D G C F A D',        open:[2,7,0,5,9,2],   freqs:[73.42,98.00,130.81,174.61,220.00,293.66]},
 ];
 
 // ============================================================
@@ -790,19 +880,9 @@ const CHORD_DATA={
     {name:'Bmaj7',fingers:[[1,1,'1-5'],[3,3,4],[2,2,3],[3,4,2]],mute:[6],   open:[],  startFret:2, tags:['barre','7th']},
     {name:'Bm7',  fingers:[[1,1,'1-5'],[3,3,4],[2,2,2]],        mute:[6],   open:[],  startFret:2, tags:['barre','7th']},
   ],
-  dropd:    [],
-  opene:    [],
-  openg:    [],
-  opend:    [],
-  dadgad:   [],
-  dropc:    [],
-  dropb:    [],
-  halfstep: [],
-  fullstep: [],
+  dropd:[],opene:[],openg:[],opend:[],dadgad:[],dropc:[],dropb:[],halfstep:[],fullstep:[],
 };
-
-let currentChordTuning='standard'
-let currentChordCat='all';
+let currentChordTuning='standard', currentChordCat='all';
 
 function drawChord(chord) {
   const W=72,H=88,padL=12,padT=22,fretH=13,strW=9,frets=4,strings=6;
@@ -831,23 +911,20 @@ function drawChord(chord) {
   h+='</svg>'; return h;
 }
 function setChordTuning(tuning) {
-  currentChordTuning = tuning;
-  document.querySelectorAll('#chord-tuning-tabs .tab').forEach(t =>
-    t.classList.toggle('active', t.onclick.toString().includes("'"+tuning+"'")));
+  currentChordTuning=tuning;
+  document.querySelectorAll('#chord-tuning-tabs .tab').forEach(t=>t.classList.toggle('active',t.onclick.toString().includes("'"+tuning+"'")));
   renderChords();
 }
 function setChordCat(cat) {
-  currentChordCat = cat;
-  document.querySelectorAll('#chord-cat-tabs .tab').forEach(t=>t.classList.toggle('active', t.onclick.toString().includes("'"+cat+"'")));
+  currentChordCat=cat;
+  document.querySelectorAll('#chord-cat-tabs .tab').forEach(t=>t.classList.toggle('active',t.onclick.toString().includes("'"+cat+"'")));
   renderChords();
 }
 function renderChords() {
-  const tuningData = CHORD_DATA[currentChordTuning] || [];
-  const filtered = currentChordCat === 'all'
-    ? tuningData
-    : tuningData.filter(c => c.tags.includes(currentChordCat));
-  document.getElementById('chord-grid').innerHTML = filtered.map(c =>
-    `<div class="chord-card"><div class="chord-name">${n(c.name, csNotation)}</div>${drawChord(c)}</div>`
+  const tuningData=CHORD_DATA[currentChordTuning]||[];
+  const filtered=currentChordCat==='all'?tuningData:tuningData.filter(c=>c.tags.includes(currentChordCat));
+  document.getElementById('chord-grid').innerHTML=filtered.map(c=>
+    `<div class="chord-card"><div class="chord-name">${n(c.name,csNotation)}</div>${drawChord(c)}</div>`
   ).join('');
 }
 renderChords();
