@@ -22,6 +22,7 @@ A single HTML file plus a service worker (`sw.js`). No framework, no build syste
 ## Known Issues
 
 - **Visual Bug**: On the scales tab are some minor visual bugs.
+- **Mixed Meter**: Mixed Meter is not working at all. I am working on it
 
 ## Credits
 
