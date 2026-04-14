@@ -72,6 +72,9 @@ body { background: var(--color-background-primary); color: var(--color-text-prim
 .sig-btn { font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all .1s; }
 .sig-btn.active { background: #1a1a1a; color: var(--color-text-primary); border-color: rgba(255,255,255,0.4); font-weight: 500; }
 .subdivide-row { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
+.mixed-bar { font-size:12px; padding:4px 8px; border-radius:var(--border-radius-md); border:0.5px solid var(--color-border-secondary); background:var(--color-background-secondary); color:var(--color-text-secondary); display:flex; align-items:center; gap:4px; }
+.mixed-bar.active-bar { border-color:#E8593C; color:var(--color-text-primary); }
+.mixed-bar-remove { font-size:10px; color:var(--color-text-secondary); cursor:pointer; padding:0 2px; }
 
 /* ---- POLYRHYTHM ---- */
 .poly-section { margin-top: 24px; padding-top: 16px; border-top: 0.5px solid var(--color-border-tertiary); }
@@ -194,6 +197,15 @@ svg.fb { display: block; }
     <!-- Time signature -->
     <div class="sig-row" id="sig-row">
       <span style="font-size:12px;color:var(--color-text-secondary);margin-right:4px;line-height:28px">Time Signature:</span>
+    </div>
+
+    <!-- Mixed Meter -->
+    <div style="margin-top:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:12px;color:var(--color-text-secondary)">Mixed Meter:</span>
+        <div id="mixed-meter-list" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        <button class="bpm-btn small" onclick="addMixedBar()" style="font-size:16px;width:24px;height:24px">+</button>
+      </div>
     </div>
 
     <!-- Subdivision -->
@@ -445,14 +457,26 @@ function scheduleClick(time, isAccent, isSubdiv) {
   osc.start(time); osc.stop(time+0.09);
 }
 function scheduler() {
-  const dur=60/bpm/subdivision;
-  while(nextTime<audioCtx.currentTime+scheduleAhead) {
-    const beatInBar=Math.floor(currentBeat/subdivision)%beatsPerBar;
-    scheduleClick(nextTime, beatInBar===0, currentBeat%subdivision!==0);
-    scheduledBeats.push({time:nextTime, beat:beatInBar});
-    currentBeat++; nextTime+=dur;
+  const dur = 60 / bpm / subdivision;
+  while(nextTime < audioCtx.currentTime + scheduleAhead) {
+    const activeBars = mixedSequence.length > 0 ? mixedSequence[mixedBarIndex] : beatsPerBar;
+    const beatInBar = Math.floor(currentBeat / subdivision) % activeBars;
+
+    scheduleClick(nextTime, beatInBar === 0, currentBeat % subdivision !== 0);
+    scheduledBeats.push({time: nextTime, beat: beatInBar, totalBeats: activeBars});
+
+    // Bar-Ende: letzter Beat des aktuellen Bars
+    const isLastBeat = beatInBar === activeBars - 1 && currentBeat % subdivision === subdivision - 1;
+    if(isLastBeat && mixedSequence.length > 0) {
+      mixedBarIndex = (mixedBarIndex + 1) % mixedSequence.length;
+      renderMixedMeter();
+    }
+
+    currentBeat++;
+    nextTime += dur;
   }
-  timerID=setTimeout(scheduler, lookahead); updateDots();
+  timerID = setTimeout(scheduler, lookahead);
+  updateDots();
 }
 function updateDots() {
   if(!audioCtx) return;
@@ -469,6 +493,7 @@ function updateDots() {
 }
 function togglePlay() {
   initAudio();
+  mixedBarIndex = 0;
   if(audioCtx.state==='suspended') audioCtx.resume();
   playing=!playing;
   const btn=document.getElementById('play-btn'), dot=document.getElementById('playing-dot');
@@ -513,14 +538,46 @@ function tap() {
 function setSig(val) { beatsPerBar=val; document.querySelectorAll('.sig-btn').forEach(b=>b.classList.toggle('active',+b.dataset.n===val)); buildDots(); }
 function setSub(val) { subdivision=val; document.querySelectorAll('.sub-btn').forEach(b=>b.classList.toggle('active',+b.dataset.v===val)); }
 function buildDots() {
-  document.getElementById('beat-row').innerHTML=Array.from({length:beatsPerBar},(_,i)=>
-    `<div class="beat-dot${i===0?' accent':''}"></div>`).join('');
+  const active = mixedSequence.length > 0 ? mixedSequence[mixedBarIndex] : beatsPerBar;
+  document.getElementById('beat-row').innerHTML = Array.from({length: active}, (_, i) =>
+    `<div class="beat-dot${i === 0 ? ' accent' : ''}"></div>`).join('');
 }
 const sigRow=document.getElementById('sig-row');
 SIGS.forEach(val=>{ const b=document.createElement('button'); b.className='sig-btn'+(val===4?' active':''); b.textContent=val+'/4'; b.dataset.n=val; b.onclick=()=>setSig(val); sigRow.appendChild(b); });
 const subRow=document.getElementById('sub-row');
 SUBS.forEach(s=>{ const b=document.createElement('button'); b.className='sig-btn sub-btn'+(s.v===1?' active':''); b.textContent=s.l; b.dataset.v=s.v; b.onclick=()=>setSub(s.v); subRow.appendChild(b); });
 buildDots();
+
+// Mixed Meter
+let mixedSequence = []; // leer = normaler Betrieb
+let mixedBarIndex = 0;
+let currentBarBeat = 0;
+
+function addMixedBar() {
+  mixedSequence.push(beatsPerBar); // aktueller Takt als Default
+  renderMixedMeter();
+}
+
+function removeMixedBar(i) {
+  mixedSequence.splice(i, 1);
+  if(mixedBarIndex >= mixedSequence.length) mixedBarIndex = 0;
+  renderMixedMeter();
+}
+
+function renderMixedMeter() {
+  document.getElementById('mixed-meter-list').innerHTML = mixedSequence.map((beats, i) =>
+    `<div class="mixed-bar${i === mixedBarIndex ? ' active-bar' : ''}">
+      <span onclick="cycleMixedBar(${i})" style="cursor:pointer">${beats}/4</span>
+      <span class="mixed-bar-remove" onclick="removeMixedBar(${i})">×</span>
+    </div>`
+  ).join('');
+}
+
+function cycleMixedBar(i) {
+  // Klick auf einen Bar ändert die Taktart (2-13)
+  mixedSequence[i] = mixedSequence[i] >= 13 ? 2 : mixedSequence[i] + 1;
+  renderMixedMeter();
+}
 
 // ============================================================
 // POLYRHYTHM
