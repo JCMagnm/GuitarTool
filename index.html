@@ -204,7 +204,7 @@ svg.fb { display: block; }
   <div class="bpm-num" id="bpm-num" contenteditable="true" inputmode="numeric"
     onclick="selAll(this)" onblur="setBpm(+this.textContent||120)"
     onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">120</div>
-  <div class="bpm-sub">BPM</div>
+  <div class="bpm-sub" id="bpm-sub">BPM</div>
 
   <div class="slider-row">
     <button class="btn btn-icon" onclick="changeBpm(-5)">−</button>
