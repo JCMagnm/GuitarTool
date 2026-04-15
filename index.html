@@ -532,6 +532,8 @@ function togglePlay() {
     document.querySelectorAll('.dot').forEach(d=>d.classList.remove('active'));
     if(!polyOn) dot.classList.remove('on');
     btn.textContent='▶ Start'; btn.classList.remove('on');
+    // Kill all sounds
+    if(audioCtx) { audioCtx.close(); audioCtx=null; }
   }
 }
 
