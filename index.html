@@ -646,12 +646,12 @@ renderGrooves();
 // ============================================================
 // EASTER EGG
 // ============================================================
-function toggleEgg() { eggManual=true; eggOn=!eggOn; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
+function toggleEgg() { eggManual=true; eggOn=!eggOn; setTabName(eggOn?'ToolTool':'Metronome'); }
 function checkEgg() {
   const oddBars = new Set(mmSeq.filter(b => b % 2 !== 0));
   const should = oddBars.size >= 2;
   if(eggManual && eggOn) return;
-  if(should !== eggOn) { eggOn=should; setTabName(eggOn?'ToolTool 🥁':'Metronome'); }
+  if(should !== eggOn) { eggOn=should; setTabName(eggOn?'ToolTool':'Metronome'); }
 }
 
 function setTabName(name) {
