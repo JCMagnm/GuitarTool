@@ -545,9 +545,11 @@ function setBpm(v) {
   document.getElementById('bpm-num').textContent = bpm===808?'TR-808':bpm;
   document.getElementById('bpm-slider').value=Math.min(240,bpm);
   // Easter eggs
-  if(bpm===808) setTabName('Roland');
-  else if(bpm===69) setTabName('( ͡° ͜ʖ ͡°)');
-  else setTabName(eggOn?'ToolTool 🥁':'Metronome');
+  if(bpm===808) { document.getElementById('bpm-num').textContent='TR-808'; setTabName('Roland'); }
+  else if(bpm===69) { setTabName('A. Hoffmann'); }
+  else if(bpm===47) { document.getElementById('bpm-num').textContent='U 47'; setTabName('Neumann'); }
+  else setTabName(eggOn?'ToolTool':'Metronome');
+
 }
 
 function changeBpm(d) { setBpm(bpm+d); }
